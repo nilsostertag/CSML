@@ -1,34 +1,36 @@
 \babel@toc {english}{}\relax 
 \babel@toc {ngerman}{}\relax 
-\contentsline {chapter}{Angaben zur Firma}{i}{chapter*.1}%
-\contentsline {chapter}{Eidesstattliche Erkl\"arung}{ii}{chapter*.2}%
-\contentsline {chapter}{Kurzfassung}{iii}{chapter*.3}%
-\contentsline {chapter}{Inhaltsverzeichnis}{iv}{chapter*.4}%
-\contentsline {chapter}{Tabellenverzeichnis}{vi}{chapter*.5}%
-\contentsline {chapter}{Quelltextverzeichnis}{vii}{chapter*.6}%
-\contentsline {chapter}{Abkürzungsverzeichnis}{viii}{chapter*.7}%
+\contentsline {chapter}{Eidesstattliche Erkl\"arung}{i}{chapter*.1}%
+\contentsline {chapter}{Kurzfassung}{ii}{chapter*.2}%
+\contentsline {chapter}{Inhaltsverzeichnis}{iii}{chapter*.3}%
+\contentsline {chapter}{Abkürzungsverzeichnis}{v}{chapter*.4}%
 \contentsline {chapter}{\numberline {1}Einleitung}{1}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Motivation}{1}{section.1.1}%
 \contentsline {section}{\numberline {1.2}Problemstellung und -abgrenzung}{1}{section.1.2}%
 \contentsline {section}{\numberline {1.3}Ziel der Arbeit}{1}{section.1.3}%
 \contentsline {section}{\numberline {1.4}Vorgehen}{1}{section.1.4}%
-\contentsline {chapter}{\numberline {2}Grundlagen}{3}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Grundlagengebiet A}{3}{section.2.1}%
-\contentsline {subsection}{\numberline {2.1.1}Definition AA}{3}{subsection.2.1.1}%
-\contentsline {subsection}{\numberline {2.1.2}Definition AB}{3}{subsection.2.1.2}%
-\contentsline {section}{\numberline {2.2}Grundlagengebiet B}{3}{section.2.2}%
-\contentsline {subsection}{\numberline {2.2.1}Definition BA}{3}{subsection.2.2.1}%
-\contentsline {subsection}{\numberline {2.2.2}Definition BB}{3}{subsection.2.2.2}%
-\contentsline {chapter}{\numberline {3}Problemanalyse}{4}{chapter.3}%
-\contentsline {chapter}{\numberline {4}Lösungskonzept}{5}{chapter.4}%
-\contentsline {chapter}{\numberline {5}Implementierung}{6}{chapter.5}%
-\contentsline {chapter}{\numberline {6}Inbetriebnahme}{7}{chapter.6}%
-\contentsline {chapter}{\numberline {7}Evaluierung}{8}{chapter.7}%
-\contentsline {chapter}{\numberline {8}Zusammenfassung und Ausblick}{9}{chapter.8}%
-\contentsline {section}{\numberline {8.1}Erreichte Ergebnisse}{9}{section.8.1}%
-\contentsline {section}{\numberline {8.2}Ausblick}{9}{section.8.2}%
-\contentsline {subsection}{\numberline {8.2.1}Erweiterbarkeit der Ergebnisse}{9}{subsection.8.2.1}%
-\contentsline {subsection}{\numberline {8.2.2}Übertragbarkeit der Ergebnisse}{9}{subsection.8.2.2}%
-\contentsline {chapter}{\nonumberline Literatur}{10}{chapter*.10}%
-\contentsline {chapter}{\numberline {A}Anhang A}{11}{appendix.A}%
-\contentsline {chapter}{\numberline {B}Anhang B}{12}{appendix.B}%
+\contentsline {chapter}{\numberline {2}Aktueller Forschungsstand}{3}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Predictive Maintenance}{3}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Fahrverhaltensanalyse}{3}{section.2.2}%
+\contentsline {chapter}{\numberline {3}Theoretische Grundlagen}{4}{chapter.3}%
+\contentsline {section}{\numberline {3.1}OBD-II}{5}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Predictive Maintenance}{5}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Fahrverhalten und -Charakteristiken}{5}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Machine Learning und Klassifizierung}{5}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Raspberry Pi}{5}{section.3.5}%
+\contentsline {section}{\numberline {3.6}Node-RED}{5}{section.3.6}%
+\contentsline {section}{\numberline {3.7}WireGuard VPN}{5}{section.3.7}%
+\contentsline {section}{\numberline {3.8}App-Development mit Flutter}{5}{section.3.8}%
+\contentsline {chapter}{\numberline {4}Umsetzung und Implementierung}{6}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Anforderungsanalyse}{6}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Komponenten- und Systemübersicht}{6}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Data Aquisition / Subkomponente Mobile-App}{6}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Backend}{6}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Datengrundlage und Datenvorverarbeitung}{6}{section.4.5}%
+\contentsline {chapter}{\numberline {5}Evaluation}{7}{chapter.5}%
+\contentsline {chapter}{\numberline {6}Zusammenfassung und Ausblick}{8}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Erreichte Ergebnisse}{8}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Fazit und Ausblick}{8}{section.6.2}%
+\contentsline {chapter}{\nonumberline Literatur}{9}{chapter*.5}%
+\contentsline {chapter}{\numberline {A}Anhang A}{10}{appendix.A}%
+\contentsline {chapter}{\numberline {B}Anhang B}{11}{appendix.B}%
