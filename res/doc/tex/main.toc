@@ -24,9 +24,12 @@
 \contentsline {chapter}{\numberline {4}Umsetzung und Implementierung}{6}{chapter.4}%
 \contentsline {section}{\numberline {4.1}Anforderungsanalyse}{6}{section.4.1}%
 \contentsline {section}{\numberline {4.2}Komponenten- und Systemübersicht}{6}{section.4.2}%
-\contentsline {section}{\numberline {4.3}Data Aquisition / Subkomponente Mobile-App}{6}{section.4.3}%
-\contentsline {section}{\numberline {4.4}Backend}{6}{section.4.4}%
+\contentsline {section}{\numberline {4.3}Smartphone-App - Subkomponente Data Aquisition}{6}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Raspberry Pi - Backend}{6}{section.4.4}%
 \contentsline {section}{\numberline {4.5}Datengrundlage und Datenvorverarbeitung}{6}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Predictive Maintenance-Algorithmen}{6}{section.4.6}%
+\contentsline {section}{\numberline {4.7}Fahrverhaltensanalyse}{6}{section.4.7}%
+\contentsline {section}{\numberline {4.8}Smartphone-App - Subkomponente Ergebnisvisualisierung und E-Learning}{6}{section.4.8}%
 \contentsline {chapter}{\numberline {5}Evaluation}{7}{chapter.5}%
 \contentsline {chapter}{\numberline {6}Zusammenfassung und Ausblick}{8}{chapter.6}%
 \contentsline {section}{\numberline {6.1}Erreichte Ergebnisse}{8}{section.6.1}%

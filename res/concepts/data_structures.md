@@ -72,6 +72,8 @@ timestamp (YYYY-MM-dd-hh:mm:ss), uuid, position (latitude/longtitude), travel_di
 
 ## 2. Data Preprocessing
 
+
+
 ## 3. Data Labeling
 
 ## 4. ML Model
@@ -82,3 +84,5 @@ timestamp (YYYY-MM-dd-hh:mm:ss), uuid, position (latitude/longtitude), travel_di
 - Umweltbewusstsein
 - Verschleißprävention
 - Fahrsicherheit
+
+Welche Daten beeinflussen welche Bewertungsapekt wie stark?
