@@ -10,10 +10,7 @@
 |longtitude  |float|long|-|1|
 |travel_distance|float|km|-|?, may be unnecessary|
 |throttle_pos|float|%|01 11/45|1|
-|steering_wheel_angle|int/float|°|-|?|
-|steering_wheel_speed|int/float|rad/sec|-|?|
 |coolant_temp|int|°C|01 05|1|
-|brake_switch|bool|I/O||?|
 |vehicle_speed|int|km/h|01 0D|?|
 |engine_load|float|%|01 04|1|
 |engine_rpm|int|rpm|01 0C|1|
