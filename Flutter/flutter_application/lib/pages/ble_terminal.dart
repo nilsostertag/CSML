@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 class DeviceScreen extends StatelessWidget {
   final BluetoothDevice device;
 
-  DeviceScreen({required this.device});
+  const DeviceScreen({super.key, required this.device});
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +23,8 @@ class DeviceScreen extends StatelessWidget {
 
 class DeviceScreenContent extends StatelessWidget {
   final TextEditingController _textController = TextEditingController();
+
+  DeviceScreenContent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +72,7 @@ class DeviceScreenContent extends StatelessWidget {
                   controller.sendMessage(_textController.text);
                   _textController.clear();
                 },
-                child: Text('Send'),
+                child: const Text('Send'),
               ),
             ],
           ),
@@ -98,6 +100,7 @@ class DeviceScreenController extends GetxController {
     if (_characteristic!.properties.notify || _characteristic!.properties.indicate) {
       _characteristic!.setNotifyValue(true);
       _characteristic!.value.listen((value) {
+        print("INCOMING: ${String.fromCharCodes(value)}");
         messages.add("<-${String.fromCharCodes(value)}");
       });
     }
@@ -108,6 +111,7 @@ class DeviceScreenController extends GetxController {
       if (_characteristic!.properties.write || _characteristic!.properties.writeWithoutResponse) {
         try {
           await _characteristic!.write(message.codeUnits);
+          print("OUIGOING: $message");
           messages.add("->$message");
         } catch (e) {
           messages.add("Failed to send: $e");
