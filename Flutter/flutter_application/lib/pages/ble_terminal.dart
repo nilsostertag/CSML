@@ -14,18 +14,15 @@ class DeviceScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Device: ${device.name}'),
+        title: Text(device.id.id),
       ),
-      body: DeviceScreenContent(device: device),
+      body: DeviceScreenContent(),
     );
   }
 }
 
 class DeviceScreenContent extends StatelessWidget {
-  final BluetoothDevice device;
   final TextEditingController _textController = TextEditingController();
-
-  DeviceScreenContent({required this.device});
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +32,21 @@ class DeviceScreenContent extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
+              DropdownButton<BluetoothCharacteristic>(
+                isExpanded: true,
+                value: controller.characteristics.isNotEmpty ? controller.characteristics.first : null,
+                onChanged: (BluetoothCharacteristic? newValue) {
+                  if (newValue != null) {
+                    controller.setCharacteristic(newValue);
+                  }
+                },
+                items: controller.characteristics.map((BluetoothCharacteristic characteristic) {
+                  return DropdownMenuItem<BluetoothCharacteristic>(
+                    value: characteristic,
+                    child: Text(characteristic.uuid.toString()),
+                  );
+                }).toList(),
+              ),
               Expanded(
                 child: ListView.builder(
                   itemCount: controller.messages.length,
@@ -47,7 +59,7 @@ class DeviceScreenContent extends StatelessWidget {
               ),
               TextField(
                 controller: _textController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Message',
                   border: OutlineInputBorder(),
                 ),
@@ -69,21 +81,40 @@ class DeviceScreenContent extends StatelessWidget {
 }
 
 class DeviceScreenController extends GetxController {
+  final RxList<BluetoothCharacteristic> characteristics = <BluetoothCharacteristic>[].obs;
   BluetoothCharacteristic? _characteristic;
   final RxList<String> messages = <String>[].obs;
 
+  void setCharacteristics(List<BluetoothCharacteristic> chars) {
+    characteristics.value = chars;
+    if (chars.isNotEmpty) {
+      setCharacteristic(chars.first);
+    }
+  }
+
   void setCharacteristic(BluetoothCharacteristic characteristic) {
     _characteristic = characteristic;
-    _characteristic!.setNotifyValue(true);
-    _characteristic!.value.listen((value) {
-      messages.add("<-${String.fromCharCodes(value)}");
-    });
+    print("Selected Characteristic properties: ${_characteristic!.properties}");
+    if (_characteristic!.properties.notify || _characteristic!.properties.indicate) {
+      _characteristic!.setNotifyValue(true);
+      _characteristic!.value.listen((value) {
+        messages.add("<-${String.fromCharCodes(value)}");
+      });
+    }
   }
 
   Future<void> sendMessage(String message) async {
     if (_characteristic != null && message.isNotEmpty) {
-      await _characteristic!.write(message.codeUnits);
-      messages.add("->$message");
+      if (_characteristic!.properties.write || _characteristic!.properties.writeWithoutResponse) {
+        try {
+          await _characteristic!.write(message.codeUnits);
+          messages.add("->$message");
+        } catch (e) {
+          messages.add("Failed to send: $e");
+        }
+      } else {
+        messages.add("Characteristic is not writable");
+      }
     }
   }
 }

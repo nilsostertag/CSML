@@ -18,11 +18,10 @@ class BLEController extends GetxController{
 
   Future<void> connectToDevice(BluetoothDevice device) async {
     //print(device);
+    try {
     await device.connect(timeout: Duration(seconds: 15));
-    device.state.listen((isConnected) async {
-      if(isConnected == BluetoothDeviceState.connecting) {
-        print("Device connecting to: ${device.name} with MAC ${device.id.id}");
-      }else if(isConnected == BluetoothDeviceState.connected) {
+    device.state.listen((BluetoothDeviceState state) async {
+      if (state == BluetoothDeviceState.connected) {
         print("Device connected: ${device.name} with MAC ${device.id.id}");
         
         // Navigiere zum neuen Screen
@@ -30,17 +29,20 @@ class BLEController extends GetxController{
 
         // Erhalte die Characteristics des Geräts
         List<BluetoothService> services = await device.discoverServices();
+        List<BluetoothCharacteristic> characteristics = [];
         for (BluetoothService service in services) {
-          for (BluetoothCharacteristic characteristic in service.characteristics) {
-            // Nehme an, dass du die erste gefundene Characteristic verwendest
-            Get.find<DeviceScreenController>().setCharacteristic(characteristic);
-            break;
-          }
+          characteristics.addAll(service.characteristics);
         }
-      }else {
+        Get.find<DeviceScreenController>().setCharacteristics(characteristics);
+      } else if (state == BluetoothDeviceState.connecting) {
+        print("Device connecting to: ${device.name} with MAC ${device.id.id}");
+      } else {
         print("Device disconnected.");
-      };
+      }
     });
+  } catch (e) {
+    print("Connection error: $e");
+  }
   }
 
 Stream<List<ScanResult>> get scanResults => ble.scanResults;
