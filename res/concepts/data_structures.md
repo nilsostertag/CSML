@@ -42,13 +42,7 @@ Beispiel:
             "fuel_consumption_rt": 20.3
         },
         "driver": {
-            "throttle_pos": 0.71,
-            "steering_wheel": {
-                "angle": 23,
-                "speed": 5
-            },
-            "brake": false,
-            "current_gear": 3
+            "throttle_pos": 0.71
         }
     }
 }
@@ -60,7 +54,9 @@ Beispiel:
 
 #### Database-Header:
 ```cpp
-timestamp (YYYY-MM-dd-hh:mm:ss), uuid, position (latitude/longtitude), travel_distance (meters), throttle_pos (%), steering_wheel_angle (degrees), steering_wheel_speed (rad/sec),  coolant_temp (°C), brake_switch (true/false), vehicle_speed (km/h), engine_load (Nm), engine_rpm (rpm), fuel_consumption_rt (mmc/sec), current_gear (0-6)
+timestamp (YYYY-MM-dd-hh:mm:ss), uuid, drive_id, latitude, longtitude, 
+travel_distance (meters), throttle_pos (%), vehicle_speed (km/h), 
+engine_load (Nm), engine_rpm (rpm), fuel_consumption_rt (mmc/sec)
 ```
 
 - Backend startet nach jedem Zeitevent einen Timer (5-10 Min), der bei Eingang eins neuen Zeitevents gestoppt wird
@@ -68,18 +64,82 @@ timestamp (YYYY-MM-dd-hh:mm:ss), uuid, position (latitude/longtitude), travel_di
 - Daten werden hierfür temporär in eine Vorverarbeitungs-Datenbank eingelagert und aus der Eingangsdatenbank gelöscht
 
 ## 2. Data Preprocessing
+- Ergänzung des Datensatzes um wichtige Parameter
+- Komplett-Übersicht:
 
+|Rohdaten |Ergänzt |
+|-|-|
+|engine_rpm|delta_engine_rpm|
+|engine_load|delta_engine_load|
+|vehicle_speed|delta_vehicle_speed|
+|throttle_pos|delta_throttle_pos|
+|fuel_consumption_rt|delta_fuel_consumption_rt|
+||allowed_speed (OSM/Overpass API)|
+||diff_allowed_speed|
 
+Delta beschreibt hierbei die Veränderung zum vorherigen Eintrag (1 Sek.)
 
 ## 3. Data Labeling
+Welche Daten beeinflussen welche Bewertungsapekt wie stark?
+
+- Fahrsicherheit
+
+| Parameter | Effekt auf Bewertung (Je höher/niedriger) | Impact |
+|-|-|-|
+|engine_rpm|-/+|1|
+|delta_engine_rpm|-/+|3|
+|engine_load|-/+|1|
+|delta_engine_load|-/-|1|
+|vehicle_speed|-/+|1|
+|delta_vehicle_speed|-/-|3|
+|throttle_pos|-/0|2|
+|delta_throttle_pos|-/0|2|
+|fuel_consumption_rt|-/+|1|
+|delta_fuel_consumption_rt|-/+|1|
+|allowed_speed|0/0|0|
+|diff_allowed_speed|-/+|3|
+
+- Umweltbewusstsein
+
+| Parameter | Effekt auf Bewertung (Je höher/niedriger) | Impact |
+|-|-|-|
+|engine_rpm|-/+|3|
+|delta_engine_rpm|-/+|3|
+|engine_load|-/+|3|
+|delta_engine_load|-/+|3|
+|vehicle_speed|0/0|1|
+|delta_vehicle_speed|-/+|1|
+|throttle_pos|-/0|2|
+|delta_throttle_pos|-/0|2|
+|fuel_consumption_rt|-/+|3|
+|delta_fuel_consumption_rt|-/+|3|
+|allowed_speed|0/0|0|
+|diff_allowed_speed|0/0|0|
+
+- Verschleißprävention
+
+| Parameter | Effekt auf Bewertung (Je höher/niedriger) | Impact |
+|-|-|-|
+|engine_rpm|-/+|3|
+|delta_engine_rpm|-/+|3|
+|engine_load|-/+|2|
+|delta_engine_load|-/-|3|
+|vehicle_speed|0|1|
+|delta_vehicle_speed|-/-|3|
+|throttle_pos|-/0|2|
+|delta_throttle_pos|-/0|2|
+|fuel_consumption_rt|-/+|2|
+|delta_fuel_consumption_rt|-/+|2|
+|allowed_speed|0/0|0|
+|diff_allowed_speed|0/0|0|
+
+
 
 ## 4. ML Model
 
-3 Output Nodes
-
+(3 Output Nodes)\
+3 Predictions
 ### Bewertungsaspekte
 - Umweltbewusstsein
 - Verschleißprävention
 - Fahrsicherheit
-
-Welche Daten beeinflussen welche Bewertungsapekt wie stark?

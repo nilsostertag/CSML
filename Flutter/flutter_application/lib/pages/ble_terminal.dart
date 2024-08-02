@@ -100,6 +100,7 @@ class DeviceScreenController extends GetxController {
     if (_characteristic!.properties.notify || _characteristic!.properties.indicate) {
       _characteristic!.setNotifyValue(true);
       _characteristic!.value.listen((value) {
+        print("INCOMING: $value");
         print("INCOMING: ${String.fromCharCodes(value)}");
         messages.add("<-${String.fromCharCodes(value)}");
       });
