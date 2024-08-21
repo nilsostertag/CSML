@@ -118,18 +118,18 @@ class DeviceScreenContent extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   if (controller._isRecording) {
-                    controller.stopRecording();
+                    
                   } else {
-                    controller.startRecording();
+
                   }
                 },
                 child: Text(controller.recordingButtonText),
               ),
               ElevatedButton(
                 onPressed: () {
-                  controller.send_messages(['010D', '0104', '010C', '015A']);
+                  controller.send_messages(['010D', '0104', '010C', '0105', '0111', '0145']);
                 },
-                child: const Text("Lalatest"),
+                child: const Text("Get Data!"),
               ),
             ],
           ),
@@ -176,11 +176,13 @@ class DeviceScreenController extends GetxController {
       characteristic.value.listen((value) {
         final stringifiedResponse = String.fromCharCodes(value);
         messages.add("< $stringifiedResponse");
-        print("response: $stringifiedResponse");
-        recordedResponses.add(stringifiedResponse);
+
+        if(stringifiedResponse.contains('41')) {
+          print("VALID response: $stringifiedResponse");
+          recordedResponses.add(stringifiedResponse);
+        }
 
         print(recordedResponses.length);
-        print(recordedResponses);
       });
     }
   }
@@ -199,34 +201,6 @@ class DeviceScreenController extends GetxController {
       }
     }
   }
-
-  void startRecording() {
-    _isRecording = true;
-    update(); // UI aktualisieren
-    _timer = Timer.periodic(Duration(seconds: _messageFrequency), (timer) async {
-      startSendingList();
-    });
-  }
-
-  void stopRecording() {
-    update(); // UI aktualisieren
-    _isRecording = false;
-    _timer?.cancel();
-  }
-
-  void startSendingList() {
-    _isSendingList = true;
-    _temporaryResponses.clear(); // Temporäre Liste zurücksetzen
-    sendMessagesFromList();
-  }
-
-  void stopSendingList() {
-    _isSendingList = false;
-    update(); // UI aktualisieren
-    _timer?.cancel();
-  }
-
-
 
   Future<void> sendMessagesFromList() async {
     int index = 0;
