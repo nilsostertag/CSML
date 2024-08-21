@@ -250,7 +250,7 @@
 % Pagestyle
 
 \pagestyle{scrheadings} 
-\clearscrheadfoot
+\clearpairofpagestyles
 \ihead{\headmark}
 \ohead{\pagemark}
 \raggedbottom
@@ -268,9 +268,9 @@
 \newcommand{\Elektronik}{\depname{\DeEn{Elektronik}%
                                        {Electical Engineering}}}
 \newcommand{\DataScience}{\depname{\DeEn{Data Science}%
-                                        {Data Science}}}       
+                                        {Data Science}}}   
 \newcommand{\MLD}{\depname{\DeEn{Machine Learning and Data Analytics}%
-								{Machine Learning and Data Analytics}}}                                
+                                        {Machine Learning and Data Analytics}}}                                   
 \def\@depname{}
 \def\depname#1{\def\@depname{#1}}
 

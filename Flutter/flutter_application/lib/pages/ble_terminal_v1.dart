@@ -24,6 +24,8 @@ class DeviceScreen extends StatelessWidget {
 class DeviceScreenContent extends StatelessWidget {
   final TextEditingController _textController = TextEditingController();
 
+  DeviceScreenContent({super.key});
+
   @override
   Widget build(BuildContext context) {
     return GetX<DeviceScreenController>(
@@ -32,11 +34,20 @@ class DeviceScreenContent extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              ElevatedButton(
-                onPressed: () {
-                  controller.findCharacteristicWithELMResponse();
+              DropdownButton<BluetoothCharacteristic>(
+                isExpanded: true,
+                value: controller.characteristics.isNotEmpty ? controller.characteristics.first : null,
+                onChanged: (BluetoothCharacteristic? newValue) {
+                  if (newValue != null) {
+                    controller.setCharacteristic(newValue);
+                  }
                 },
-                child: Text('Find ELM Characteristic'),
+                items: controller.characteristics.map((BluetoothCharacteristic characteristic) {
+                  return DropdownMenuItem<BluetoothCharacteristic>(
+                    value: characteristic,
+                    child: Text(characteristic.uuid.toString()),
+                  );
+                }).toList(),
               ),
               Expanded(
                 child: ListView.builder(
@@ -50,7 +61,7 @@ class DeviceScreenContent extends StatelessWidget {
               ),
               TextField(
                 controller: _textController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Message',
                   border: OutlineInputBorder(),
                 ),
@@ -61,7 +72,7 @@ class DeviceScreenContent extends StatelessWidget {
                   controller.sendMessage(_textController.text);
                   _textController.clear();
                 },
-                child: Text('Send'),
+                child: const Text('Send'),
               ),
             ],
           ),
@@ -76,27 +87,11 @@ class DeviceScreenController extends GetxController {
   BluetoothCharacteristic? _characteristic;
   final RxList<String> messages = <String>[].obs;
 
-  // Methode, um die richtige Characteristic zu finden
-  Future<void> findCharacteristicWithELMResponse() async {
-    for (var characteristic in characteristics) {
-      if (characteristic.properties.write || characteristic.properties.writeWithoutResponse) {
-        try {
-          await characteristic.write("atz".codeUnits);
-          await Future.delayed(Duration(milliseconds: 500));  // Warte auf Antwort
-          List<int> response = await characteristic.read();
-          String responseString = String.fromCharCodes(response);
-          
-          if (responseString.contains("ELM")) {
-            setCharacteristic(characteristic);
-            messages.add("Characteristic found: ${characteristic.uuid}");
-            return;
-          }
-        } catch (e) {
-          messages.add("Failed to write to characteristic: ${characteristic.uuid}");
-        }
-      }
+  void setCharacteristics(List<BluetoothCharacteristic> chars) {
+    characteristics.value = chars;
+    if (chars.isNotEmpty) {
+      setCharacteristic(chars.first);
     }
-    messages.add("No suitable characteristic found");
   }
 
   void setCharacteristic(BluetoothCharacteristic characteristic) {
@@ -105,7 +100,9 @@ class DeviceScreenController extends GetxController {
     if (_characteristic!.properties.notify || _characteristic!.properties.indicate) {
       _characteristic!.setNotifyValue(true);
       _characteristic!.value.listen((value) {
-        messages.add("Received: ${String.fromCharCodes(value)}");
+        print("INCOMING: $value");
+        print("INCOMING: ${String.fromCharCodes(value)}");
+        messages.add("<-${String.fromCharCodes(value)}");
       });
     }
   }
@@ -115,7 +112,8 @@ class DeviceScreenController extends GetxController {
       if (_characteristic!.properties.write || _characteristic!.properties.writeWithoutResponse) {
         try {
           await _characteristic!.write(message.codeUnits);
-          messages.add("Sent: $message");
+          print("OUTGOING: $message");
+          messages.add("->$message");
         } catch (e) {
           messages.add("Failed to send: $e");
         }

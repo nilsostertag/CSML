@@ -24,25 +24,25 @@ Beispiel:
 ```json
 {
     "header": {
-        "timestamp": "2024-06-18 13:46:22.853",
-        "uudi": "f437137a-0d5b-46f7-b204-8ca4b94177aa",
-        "type": 1,
+        "timestamp": "2024-08-16T13:46:24.853Z",
+        "uuid": "f437137a-0d5b-46f7-b204-8ca4b94177aa",
+        "drive_id": 2
     },
     "payload": {
         "position": {
             "latitude": 48.840550,
             "longtitude": 10.068598
         },
-        "travel_distance": 2.73,
-        "vehicle_speed": 50,
+        "travel_distance": 3.21,
+        "vehicle_speed": 31,
         "engine": {
-            "load": 0.46,
-            "rpm": 3129,
-            "coolant_temp": 78,
-            "fuel_consumption_rt": 20.3
+            "load": 0.21,
+            "rpm": 1840,
+            "coolant_temp": 79,
+            "fuel_consumption_rt": 12.9
         },
         "driver": {
-            "throttle_pos": 0.71
+            "throttle_pos": 0.00
         }
     }
 }
