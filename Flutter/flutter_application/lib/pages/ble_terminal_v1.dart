@@ -24,8 +24,6 @@ class DeviceScreen extends StatelessWidget {
 class DeviceScreenContent extends StatelessWidget {
   final TextEditingController _textController = TextEditingController();
 
-  DeviceScreenContent({super.key});
-
   @override
   Widget build(BuildContext context) {
     return GetX<DeviceScreenController>(
@@ -34,9 +32,9 @@ class DeviceScreenContent extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              DropdownButton<BluetoothCharacteristic>(
+              Obx(() => DropdownButton<BluetoothCharacteristic>(
                 isExpanded: true,
-                value: controller.characteristics.isNotEmpty ? controller.characteristics.first : null,
+                value: controller.selectedCharacteristic.value,
                 onChanged: (BluetoothCharacteristic? newValue) {
                   if (newValue != null) {
                     controller.setCharacteristic(newValue);
@@ -48,7 +46,7 @@ class DeviceScreenContent extends StatelessWidget {
                     child: Text(characteristic.uuid.toString()),
                   );
                 }).toList(),
-              ),
+              )),
               Expanded(
                 child: ListView.builder(
                   itemCount: controller.messages.length,
@@ -61,7 +59,7 @@ class DeviceScreenContent extends StatelessWidget {
               ),
               TextField(
                 controller: _textController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Message',
                   border: OutlineInputBorder(),
                 ),
@@ -72,7 +70,7 @@ class DeviceScreenContent extends StatelessWidget {
                   controller.sendMessage(_textController.text);
                   _textController.clear();
                 },
-                child: const Text('Send'),
+                child: Text('Send'),
               ),
             ],
           ),
@@ -84,7 +82,7 @@ class DeviceScreenContent extends StatelessWidget {
 
 class DeviceScreenController extends GetxController {
   final RxList<BluetoothCharacteristic> characteristics = <BluetoothCharacteristic>[].obs;
-  BluetoothCharacteristic? _characteristic;
+  final Rx<BluetoothCharacteristic?> selectedCharacteristic = Rx<BluetoothCharacteristic?>(null);
   final RxList<String> messages = <String>[].obs;
 
   void setCharacteristics(List<BluetoothCharacteristic> chars) {
@@ -95,25 +93,22 @@ class DeviceScreenController extends GetxController {
   }
 
   void setCharacteristic(BluetoothCharacteristic characteristic) {
-    _characteristic = characteristic;
-    print("Selected Characteristic properties: ${_characteristic!.properties}");
-    if (_characteristic!.properties.notify || _characteristic!.properties.indicate) {
-      _characteristic!.setNotifyValue(true);
-      _characteristic!.value.listen((value) {
-        print("INCOMING: $value");
-        print("INCOMING: ${String.fromCharCodes(value)}");
-        messages.add("<-${String.fromCharCodes(value)}");
+    selectedCharacteristic.value = characteristic;
+    print("Selected Characteristic properties: ${characteristic.properties}");
+    if (characteristic.properties.notify || characteristic.properties.indicate) {
+      characteristic.setNotifyValue(true);
+      characteristic.value.listen((value) {
+        messages.add("Received: ${String.fromCharCodes(value)}");
       });
     }
   }
 
   Future<void> sendMessage(String message) async {
-    if (_characteristic != null && message.isNotEmpty) {
-      if (_characteristic!.properties.write || _characteristic!.properties.writeWithoutResponse) {
+    if (selectedCharacteristic.value != null && message.isNotEmpty) {
+      if (selectedCharacteristic.value!.properties.write || selectedCharacteristic.value!.properties.writeWithoutResponse) {
         try {
-          await _characteristic!.write(message.codeUnits);
-          print("OUTGOING: $message");
-          messages.add("->$message");
+          await selectedCharacteristic.value!.write(message.codeUnits);
+          messages.add("Sent: $message");
         } catch (e) {
           messages.add("Failed to send: $e");
         }

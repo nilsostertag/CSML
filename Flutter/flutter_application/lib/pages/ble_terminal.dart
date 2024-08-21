@@ -85,6 +85,8 @@ class DeviceScreenController extends GetxController {
           await Future.delayed(Duration(milliseconds: 500));  // Warte auf Antwort
           List<int> response = await characteristic.read();
           String responseString = String.fromCharCodes(response);
+          messages.add(characteristic.uuid.toString());
+          messages.add(responseString);
           
           if (responseString.contains("ELM")) {
             setCharacteristic(characteristic);
@@ -97,6 +99,13 @@ class DeviceScreenController extends GetxController {
       }
     }
     messages.add("No suitable characteristic found");
+  }
+
+  void setCharacteristics(List<BluetoothCharacteristic> chars) {
+    characteristics.value = chars;
+    if (chars.isNotEmpty) {
+      setCharacteristic(chars.first);
+    }
   }
 
   void setCharacteristic(BluetoothCharacteristic characteristic) {
