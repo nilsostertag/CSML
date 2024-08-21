@@ -104,6 +104,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.6.6"
+  intl:
+    dependency: "direct main"
+    description:
+      name: intl
+      sha256: "3bc132a9dbce73a7e4a21a17d06e1878839ffbf975568bc875c60537824b0c4d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.18.1"
   leak_tracker:
     dependency: transitive
     description:
@@ -160,6 +168,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.11.0"
+  number_system:
+    dependency: "direct main"
+    description:
+      name: number_system
+      sha256: "3b0659373b9816e9240ae1fee6f28ef05664eaa469f99c3cdbedb5924e607387"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.6+8"
   path:
     dependency: transitive
     description:

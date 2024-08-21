@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application/pages/utils/data_structures.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:get/get.dart';
 import 'dart:async';
+import 'package:number_system/number_system.dart';
 
 class DeviceScreen extends StatelessWidget {
   final BluetoothDevice device;
@@ -136,6 +138,8 @@ class DeviceScreenController extends GetxController {
   final Rx<BluetoothCharacteristic?> selectedCharacteristic = Rx<BluetoothCharacteristic?>(null);
   final RxList<String> messages = <String>[].obs;
   final RxList<String> recordedResponses = <String>[].obs;
+  
+  List<DataStructure> dataSetRecord = [];
 
   bool _isRecording = false;
   bool _isSendingList = false;
@@ -143,10 +147,10 @@ class DeviceScreenController extends GetxController {
   final int _messageFrequency = 1; // Frequenz in Sekunden
 
   List<String> _target_PIDs = [
-    '010D',
-    '0104',
-    '010C',
-    '015A'
+    '010D', //speed
+    '0104', //load
+    '010C', //rpm
+    '015A'  //throttle
   ];
 
   final RxList<String> _temporaryResponses = <String>[].obs;
@@ -164,12 +168,13 @@ class DeviceScreenController extends GetxController {
     if (characteristic.properties.notify || characteristic.properties.indicate) {
       characteristic.setNotifyValue(true);
       characteristic.value.listen((value) {
-        messages.add("< ${String.fromCharCodes(value)}");
+        final stringifiedResponse = String.fromCharCodes(value);
+        messages.add("< ${convertToDec(stringifiedResponse)}");
         if (_isRecording) {
-          recordedResponses.add("< ${String.fromCharCodes(value)}");
+          recordedResponses.add(convertToDec(stringifiedResponse));
         }
         if (_isSendingList) {
-          _temporaryResponses.add("< ${String.fromCharCodes(value)}");
+          _temporaryResponses.add(convertToDec(stringifiedResponse));
         }
       });
     }
@@ -195,7 +200,7 @@ class DeviceScreenController extends GetxController {
     update(); // UI aktualisieren
     _timer = Timer.periodic(Duration(seconds: _messageFrequency), (timer) async {
       if (selectedCharacteristic.value != null) {
-        await sendMessage('Test Message ${DateTime.now()}');
+        //await sendMessage('Test Message ${DateTime.now()}');
       }
     });
   }
@@ -218,6 +223,8 @@ class DeviceScreenController extends GetxController {
     _timer?.cancel();
   }
 
+
+
   Future<void> sendMessagesFromList() async {
     int index = 0;
     _timer = Timer.periodic(Duration(seconds: _messageFrequency), (timer) async {
@@ -225,11 +232,38 @@ class DeviceScreenController extends GetxController {
         timer.cancel();
         return;
       }
-      if (index < _target_PIDs.length) {
+      for (index = 0; index < _target_PIDs.length; index++) {
         await sendMessage(_target_PIDs[index]);
-        index++;
+        print(_temporaryResponses);
       }
+
+      // Datenstruktur erstellen
+      DataStructure dataSet = createDataStructure(
+        "f437137a-0d5b-46f7-b204-8ca4b94177aa", //uuid
+        "2", //driveid
+        "48.840550", //lat
+        "10.068598", //long
+        convertToDec(_temporaryResponses[0]), //vehicle speed
+        convertToDec(_temporaryResponses[1]), //engine load
+        convertToDec(_temporaryResponses[2]), //engine rpm
+        "78", //engine coolant temp
+        "13.2", //engine fuel consumption
+        convertToDec(_temporaryResponses[3]) //throttle position
+      );
+
+      dataSetRecord.add(dataSet);
     });
+  }
+
+  String convertToDec(String hexString) {
+    List<String> substrings = hexString.split(' ');
+    substrings = substrings..removeAt(1);
+    substrings = substrings..removeAt(0);
+
+    String result_hex = substrings.join('');
+    String result = result_hex.hexToDEC().toString();
+
+    return result;
   }
 
   String get recordingButtonText => _isRecording ? "Aufnahme stoppen" : "Aufnahme starten";
