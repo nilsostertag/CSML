@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application/pages/utils/data_structures.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -252,6 +254,7 @@ class DeviceScreenController extends GetxController {
       );
 
       dataSetRecord.add(dataSet);
+      messages.add(dataSet.toJson().toString());
     });
   }
 
