@@ -13,7 +13,6 @@ dependencies:
   intl: ^0.18.0
 
   number_system: ^0.0.6+8
-  geolocator: ^13.0.1
   
   flutter_blue:
   get:

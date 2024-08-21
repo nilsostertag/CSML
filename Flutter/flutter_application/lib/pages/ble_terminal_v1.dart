@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application/pages/utils/data_structures.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -127,7 +129,7 @@ class DeviceScreenContent extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
-                  controller.send_messages(['010D', '0104', '010C', '0105', '0111', '0145']);
+                  controller.gatherData(['010D', '0104', '010C', '0105', '0111', '0145']);
                 },
                 child: const Text("Get Data!"),
               ),
@@ -179,9 +181,9 @@ class DeviceScreenController extends GetxController {
 
         if(stringifiedResponse.contains('41')) {
           print("VALID response: $stringifiedResponse");
-          recordedResponses.add(stringifiedResponse);
-          for(int i = 0; i < recordedResponses.length; i++) {
-            print("$i: $recordedResponses[i]");
+          _temporaryResponses.add(stringifiedResponse);
+          for(int i = 0; i < _temporaryResponses.length; i++) {
+            print("$i: ${_temporaryResponses[i]}");
           }
         }
 
@@ -205,37 +207,6 @@ class DeviceScreenController extends GetxController {
     }
   }
 
-  Future<void> sendMessagesFromList() async {
-    int index = 0;
-    _timer = Timer.periodic(Duration(seconds: _messageFrequency), (timer) async {
-      if (!_isSendingList || selectedCharacteristic.value == null) {
-        timer.cancel();
-        return;
-      }
-      for (index = 0; index < _target_PIDs.length; index++) {
-        await sendMessage(_target_PIDs[index]);
-        print(_temporaryResponses);
-      }
-
-      // Datenstruktur erstellen
-      DataStructure dataSet = createDataStructure(
-        "f437137a-0d5b-46f7-b204-8ca4b94177aa", //uuid
-        "2", //driveid
-        "48.840550", //lat
-        "10.068598", //long
-        _temporaryResponses[0], //vehicle speed
-        _temporaryResponses[1], //engine load
-        _temporaryResponses[2], //engine rpm
-        "78", //engine coolant temp
-        "13.2", //engine fuel consumption
-        _temporaryResponses[3] //throttle position
-      );
-
-      dataSetRecord.add(dataSet);
-      messages.add(dataSet.toJson().toString());
-    });
-  }
-
   String convertToDec(String hexString) {
     List<String> substrings = hexString.split(' ');
     substrings = substrings..removeAt(1);
@@ -247,12 +218,75 @@ class DeviceScreenController extends GetxController {
     return result;
   }
 
+  void gatherData(List<String> PIDs) {
+    final Map<String, String> dataNodeMap = {};
+    _temporaryResponses.clear();
+    send_messages(PIDs);
+
+    for(int i = 0; i < _temporaryResponses.length; i++) {
+      String _buffer_response = _temporaryResponses[i];
+
+      if(_buffer_response.contains('41 0D')) {
+        dataNodeMap['speed'] = _buffer_response;
+      } else if(!_buffer_response.contains('41 0D')) {
+        dataNodeMap['speed'] = 'None';
+      }
+      if(_buffer_response.contains('41 04')) {
+        dataNodeMap['load'] = _buffer_response;
+      } else if(!_buffer_response.contains('41 04')) {
+        dataNodeMap['load'] = 'None';
+      }
+      if(_buffer_response.contains('41 0C')) {
+        dataNodeMap['rpm'] = _buffer_response;
+      } else if(!_buffer_response.contains('41 0C')) {
+        dataNodeMap['rpm'] = 'None';
+      }
+      if(_buffer_response.contains('41 05')) {
+        dataNodeMap['cool_temp'] = _buffer_response;
+      } else if(!_buffer_response.contains('41 05')) {
+        dataNodeMap['cool_temp'] = 'None';
+      }
+      if(_buffer_response.contains('41 11')) {
+        dataNodeMap['abs_throt_pos'] = _buffer_response;
+      } else if(!_buffer_response.contains('41 11')) {
+        dataNodeMap['abs_throt_pos'] = 'None';
+      }
+      if(_buffer_response.contains('41 45')) {
+        dataNodeMap['rel_throt_pos'] = _buffer_response;
+      } else if(!_buffer_response.contains('41 45')) {
+        dataNodeMap['rel_throt_pos'] = 'None';
+      }
+
+      // Datenstruktur erstellen
+      DataStructure dataSet = createDataStructure(
+        "f437137a-0d5b-46f7-b204-8ca4b94177aa", //uuid
+        "2", //driveid
+        "48.840550", //lat
+        "10.068598", //long
+        dataNodeMap['speed'].toString(), //vehicle speed
+        dataNodeMap['load'].toString(), //engine load
+        dataNodeMap['rpm'].toString(), //engine rpm
+        dataNodeMap['cool_temp'].toString(), //engine coolant temp
+        "13.2", //engine fuel consumption
+        dataNodeMap['abs_throt_pos'].toString() //throttle position
+      );
+
+      String jsonString = jsonEncode(dataSet.toJson());
+      print(jsonString);
+
+      //Hier stehen geblieben
+
+    }
+  }
+
   void send_messages(List<String> PIDs) async {
     int _delay = (_messageFrequency * 1000 / PIDs.length).toInt();
     for(int i = 0; i < PIDs.length; i++) {
       await sendMessage(PIDs[i]);
       Future.delayed(const Duration(milliseconds: 1000));
     }
+
+    
   }
 
   String get recordingButtonText => _isRecording ? "Aufnahme stoppen" : "Aufnahme starten";
