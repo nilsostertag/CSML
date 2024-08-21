@@ -180,6 +180,9 @@ class DeviceScreenController extends GetxController {
         if(stringifiedResponse.contains('41')) {
           print("VALID response: $stringifiedResponse");
           recordedResponses.add(stringifiedResponse);
+          for(int i = 0; i < recordedResponses.length; i++) {
+            print("$i: $recordedResponses[i]");
+          }
         }
 
         print(recordedResponses.length);
