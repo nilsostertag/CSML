@@ -33,7 +33,6 @@ Beispiel:
             "latitude": 48.840550,
             "longtitude": 10.068598
         },
-        "travel_distance": 3.21,
         "vehicle_speed": 31,
         "engine": {
             "load": 0.21,

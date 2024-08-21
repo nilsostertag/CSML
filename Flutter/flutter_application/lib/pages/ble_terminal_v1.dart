@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_application/pages/utils/data_structures.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -127,6 +125,15 @@ class DeviceScreenContent extends StatelessWidget {
                 },
                 child: Text(controller.recordingButtonText),
               ),
+              ElevatedButton(
+                onPressed: () {
+                controller.sendMessage('010D');
+                controller.sendMessage('0104');
+                controller.sendMessage('010C');
+                controller.sendMessage('015A');
+                },
+                child: const Text("Lalatest"),
+              ),
             ],
           ),
         );
@@ -146,9 +153,9 @@ class DeviceScreenController extends GetxController {
   bool _isRecording = false;
   bool _isSendingList = false;
   Timer? _timer;
-  final int _messageFrequency = 1; // Frequenz in Sekunden
+  final int _messageFrequency = 3; // Frequenz in Sekunden
 
-  List<String> _target_PIDs = [
+  final List<String> _target_PIDs = [
     '010D', //speed
     '0104', //load
     '010C', //rpm
@@ -171,13 +178,17 @@ class DeviceScreenController extends GetxController {
       characteristic.setNotifyValue(true);
       characteristic.value.listen((value) {
         final stringifiedResponse = String.fromCharCodes(value);
-        messages.add("< ${convertToDec(stringifiedResponse)}");
+        messages.add("< $stringifiedResponse");
+        print("response: $stringifiedResponse");
         if (_isRecording) {
-          recordedResponses.add(convertToDec(stringifiedResponse));
+          recordedResponses.add(stringifiedResponse);
         }
         if (_isSendingList) {
-          _temporaryResponses.add(convertToDec(stringifiedResponse));
+          _temporaryResponses.add(stringifiedResponse);
         }
+
+        print(recordedResponses.length);
+        print(recordedResponses);
       });
     }
   }
@@ -201,15 +212,13 @@ class DeviceScreenController extends GetxController {
     _isRecording = true;
     update(); // UI aktualisieren
     _timer = Timer.periodic(Duration(seconds: _messageFrequency), (timer) async {
-      if (selectedCharacteristic.value != null) {
-        //await sendMessage('Test Message ${DateTime.now()}');
-      }
+      startSendingList();
     });
   }
 
   void stopRecording() {
-    _isRecording = false;
     update(); // UI aktualisieren
+    _isRecording = false;
     _timer?.cancel();
   }
 
@@ -245,12 +254,12 @@ class DeviceScreenController extends GetxController {
         "2", //driveid
         "48.840550", //lat
         "10.068598", //long
-        convertToDec(_temporaryResponses[0]), //vehicle speed
-        convertToDec(_temporaryResponses[1]), //engine load
-        convertToDec(_temporaryResponses[2]), //engine rpm
+        _temporaryResponses[0], //vehicle speed
+        _temporaryResponses[1], //engine load
+        _temporaryResponses[2], //engine rpm
         "78", //engine coolant temp
         "13.2", //engine fuel consumption
-        convertToDec(_temporaryResponses[3]) //throttle position
+        _temporaryResponses[3] //throttle position
       );
 
       dataSetRecord.add(dataSet);
