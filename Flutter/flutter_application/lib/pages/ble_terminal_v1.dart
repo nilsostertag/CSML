@@ -127,10 +127,7 @@ class DeviceScreenContent extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
-                controller.sendMessage('010D');
-                controller.sendMessage('0104');
-                controller.sendMessage('010C');
-                controller.sendMessage('015A');
+                  controller.send_messages(['010D', '0104', '010C', '015A']);
                 },
                 child: const Text("Lalatest"),
               ),
@@ -180,12 +177,7 @@ class DeviceScreenController extends GetxController {
         final stringifiedResponse = String.fromCharCodes(value);
         messages.add("< $stringifiedResponse");
         print("response: $stringifiedResponse");
-        if (_isRecording) {
-          recordedResponses.add(stringifiedResponse);
-        }
-        if (_isSendingList) {
-          _temporaryResponses.add(stringifiedResponse);
-        }
+        recordedResponses.add(stringifiedResponse);
 
         print(recordedResponses.length);
         print(recordedResponses);
@@ -276,6 +268,14 @@ class DeviceScreenController extends GetxController {
     String result = result_hex.hexToDEC().toString();
 
     return result;
+  }
+
+  void send_messages(List<String> PIDs) async {
+    int _delay = (_messageFrequency * 1000 / PIDs.length).toInt();
+    for(int i = 0; i < PIDs.length; i++) {
+      await sendMessage(PIDs[i]);
+      Future.delayed(const Duration(milliseconds: 1000));
+    }
   }
 
   String get recordingButtonText => _isRecording ? "Aufnahme stoppen" : "Aufnahme starten";
