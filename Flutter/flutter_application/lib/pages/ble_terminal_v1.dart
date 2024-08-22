@@ -119,13 +119,8 @@ class DeviceScreenContent extends StatelessWidget {
               // Zusätzlicher Button (Funktionalität später hinzufügen)
               ElevatedButton(
                 onPressed: () {
-                  if (controller._isRecording) {
-                    
-                  } else {
-
-                  }
                 },
-                child: Text(controller.recordingButtonText),
+                child: Text(/*controller.recordingButtonText*/"placeholder"),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -149,9 +144,9 @@ class DeviceScreenController extends GetxController {
   
   List<DataStructure> dataSetRecord = [];
 
-  bool _isRecording = false;
-  bool _isSendingList = false;
-  Timer? _timer;
+  //bool _isRecording = false;
+  //bool _isSendingList = false;
+  //Timer? _timer;
   final int _messageFrequency = 3; // Frequenz in Sekunden
 
   final List<String> _target_PIDs = [
@@ -289,5 +284,5 @@ class DeviceScreenController extends GetxController {
     
   }
 
-  String get recordingButtonText => _isRecording ? "Aufnahme stoppen" : "Aufnahme starten";
+  //String get recordingButtonText => _isRecording ? "Aufnahme stoppen" : "Aufnahme starten";
 }
