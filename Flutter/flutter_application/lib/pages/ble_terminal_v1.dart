@@ -6,6 +6,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:get/get.dart';
 import 'dart:async';
 import 'package:number_system/number_system.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class DeviceScreen extends StatelessWidget {
   final BluetoothDevice device;
@@ -27,9 +28,9 @@ class DeviceScreen extends StatelessWidget {
 }
 
 class DeviceScreenContent extends StatelessWidget {
-  final TextEditingController _textController = TextEditingController();
-  final TextEditingController _driveIdController = TextEditingController(text: '1');
-  final TextEditingController _uuidController = TextEditingController(text: 'f437137a-0d5b-46f7-b204-8ca4b94177aa');
+  final TextEditingController textController = TextEditingController();
+  final TextEditingController driveIdController = TextEditingController(text: '1');
+  final TextEditingController uuidController = TextEditingController(text: 'f437137a-0d5b-46f7-b204-8ca4b94177aa');
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +60,7 @@ class DeviceScreenContent extends StatelessWidget {
 
               // Textfeld für Drive-ID mit Default-Wert
               TextField(
-                controller: _driveIdController,
+                controller: driveIdController,
                 decoration: InputDecoration(
                   labelText: 'Drive-ID',
                   border: OutlineInputBorder(),
@@ -69,7 +70,7 @@ class DeviceScreenContent extends StatelessWidget {
 
               // Textfeld für UUID mit Default-Wert
               TextField(
-                controller: _uuidController,
+                controller: uuidController,
                 decoration: InputDecoration(
                   labelText: 'UUID',
                   border: OutlineInputBorder(),
@@ -98,7 +99,7 @@ class DeviceScreenContent extends StatelessWidget {
 
               // Textfeld für Nachrichten
               TextField(
-                controller: _textController,
+                controller: textController,
                 decoration: InputDecoration(
                   labelText: 'Nachricht',
                   border: OutlineInputBorder(),
@@ -109,25 +110,41 @@ class DeviceScreenContent extends StatelessWidget {
               // Sende-Button
               ElevatedButton(
                 onPressed: () {
-                  controller.sendMessage(_textController.text);
-                  _textController.clear();
+                  controller.sendMessage(textController.text);
+                  textController.clear();
                 },
                 child: Text('Senden'),
               ),
               const SizedBox(height: 10),
-
-              // Zusätzlicher Button (Funktionalität später hinzufügen)
               ElevatedButton(
                 onPressed: () {
-                },
-                child: Text(/*controller.recordingButtonText*/"placeholder"),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  controller.gatherData(['010D', '0104', '010C', '0105', '0111', '0145']);
+                  controller.gatherData();
                 },
                 child: const Text("Get Data!"),
               ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () {
+                  controller._connectWebSocket();
+                },
+                child: const Text("Connect WS!"),
+              ),
+              ValueListenableBuilder<bool>(
+              valueListenable: controller._isConnected,
+              builder: (context, isConnected, child) {
+                return Container(
+                  width: 100,
+                  height: 100,
+                  color: isConnected ? Colors.green : Colors.red,
+                  child: Center(
+                    child: Text(
+                      'WS',
+                      style: TextStyle(color: Colors.white, fontSize: 24),
+                    ),
+                  ),
+                );
+              },
+            ),
             ],
           ),
         );
@@ -144,19 +161,14 @@ class DeviceScreenController extends GetxController {
   
   List<DataStructure> dataSetRecord = [];
 
-  //bool _isRecording = false;
-  //bool _isSendingList = false;
-  //Timer? _timer;
-  final int _messageFrequency = 3; // Frequenz in Sekunden
-
-  final List<String> _target_PIDs = [
-    '010D', //speed
-    '0104', //load
-    '010C', //rpm
-    '015A'  //throttle
-  ];
+  static const int _messageFrequency = 1; // Requestfrequenz in Sekunden
+  final List<String> target_PIDs = ['010D', '0104', '010C', '0105', '0111', '0145'];
+  static const _messageDelay = _messageFrequency * 1000;
 
   final RxList<String> _temporaryResponses = <String>[].obs;
+
+  WebSocketChannel? _channel;
+  final ValueNotifier<bool> _isConnected = ValueNotifier<bool>(false);
 
   void setCharacteristics(List<BluetoothCharacteristic> chars) {
     characteristics.value = chars;
@@ -182,7 +194,7 @@ class DeviceScreenController extends GetxController {
           }
         }
 
-        print(recordedResponses.length);
+        //print(recordedResponses.length);
       });
     }
   }
@@ -201,7 +213,7 @@ class DeviceScreenController extends GetxController {
       }
     }
   }
-
+  
   String convertToDec(String hexString) {
     List<String> substrings = hexString.split(' ');
     substrings = substrings..removeAt(1);
@@ -212,76 +224,121 @@ class DeviceScreenController extends GetxController {
 
     return result;
   }
-
-  void gatherData(List<String> PIDs) {
-    final Map<String, String> dataNodeMap = {};
+  
+  Future<void> gatherData() async {
     _temporaryResponses.clear();
-    send_messages(PIDs);
+    print("clearing temp response collector: size ${_temporaryResponses.length}");
+    print("Sending messages");
 
-    for(int i = 0; i < _temporaryResponses.length; i++) {
-      String _buffer_response = _temporaryResponses[i];
+    await send_messages(target_PIDs);
+
+    String jsonPayload = await extractData(_temporaryResponses);
+    
+    //Hier stehen geblieben
+    //Websocket connection verwenden
+
+    _sendWebsocketMessage(jsonPayload);
+    print('message sent wo websocket!!');
+    }
+
+  Future<String> extractData(List<String> receivedData) async {
+    String jsonString;
+    final Map<String, String> dataNodeMap = {
+      'speed': 'None',
+      'load': 'None',
+      'rpm': 'None',
+      'cool_temp': 'None',
+      'abs_throt_pos': 'None',
+      'rel_throt_pos': 'None'
+    };
+    for(int i = 0; i < receivedData.length; i++) {
+      print(i.toString());
+      String _buffer_response = receivedData[i];
 
       if(_buffer_response.contains('41 0D')) {
+        print("found speed!");
         dataNodeMap['speed'] = _buffer_response;
-      } else if(!_buffer_response.contains('41 0D')) {
-        dataNodeMap['speed'] = 'None';
       }
       if(_buffer_response.contains('41 04')) {
         dataNodeMap['load'] = _buffer_response;
-      } else if(!_buffer_response.contains('41 04')) {
-        dataNodeMap['load'] = 'None';
+        print("found load!");
       }
       if(_buffer_response.contains('41 0C')) {
+        print("found rpm!");
         dataNodeMap['rpm'] = _buffer_response;
-      } else if(!_buffer_response.contains('41 0C')) {
-        dataNodeMap['rpm'] = 'None';
       }
       if(_buffer_response.contains('41 05')) {
+        print("found cool_temp!");
         dataNodeMap['cool_temp'] = _buffer_response;
-      } else if(!_buffer_response.contains('41 05')) {
-        dataNodeMap['cool_temp'] = 'None';
       }
       if(_buffer_response.contains('41 11')) {
+        print("found abs_throt_pos!");
         dataNodeMap['abs_throt_pos'] = _buffer_response;
-      } else if(!_buffer_response.contains('41 11')) {
-        dataNodeMap['abs_throt_pos'] = 'None';
       }
       if(_buffer_response.contains('41 45')) {
+        print("found rel_throt_pos!");
         dataNodeMap['rel_throt_pos'] = _buffer_response;
-      } else if(!_buffer_response.contains('41 45')) {
-        dataNodeMap['rel_throt_pos'] = 'None';
       }
+    }
 
-      // Datenstruktur erstellen
-      DataStructure dataSet = createDataStructure(
-        "f437137a-0d5b-46f7-b204-8ca4b94177aa", //uuid
-        "2", //driveid
-        "48.840550", //lat
-        "10.068598", //long
-        dataNodeMap['speed'].toString(), //vehicle speed
-        dataNodeMap['load'].toString(), //engine load
-        dataNodeMap['rpm'].toString(), //engine rpm
-        dataNodeMap['cool_temp'].toString(), //engine coolant temp
-        "13.2", //engine fuel consumption
-        dataNodeMap['abs_throt_pos'].toString() //throttle position
-      );
+    // Datenstruktur erstellen
+    DataStructure dataSet = createDataStructure(
+      "f437137a-0d5b-46f7-b204-8ca4b94177aa", //uuid
+      "2", //driveid
+      "48.840550", //lat
+      "10.068598", //long
+      dataNodeMap['speed'].toString(), //vehicle speed
+      dataNodeMap['load'].toString(), //engine load
+      dataNodeMap['rpm'].toString(), //engine rpm
+      dataNodeMap['cool_temp'].toString(), //engine coolant temp
+      "13.2", //engine fuel consumption
+      dataNodeMap['abs_throt_pos'].toString() //throttle position
+    );
 
-      String jsonString = jsonEncode(dataSet.toJson());
-      print(jsonString);
+    jsonString = jsonEncode(dataSet.toJson());
+    print(jsonString);
+    return jsonString;
+  }
 
-      //Hier stehen geblieben
-
+  Future<void> send_messages(List<String> PIDs) async {
+    for(int i = 0; i < PIDs.length; i++) {
+      await sendMessage(PIDs[i]);
+      print("sending ${PIDs[i]}");
+      Future.delayed(const Duration(milliseconds: _messageDelay));
     }
   }
 
-  void send_messages(List<String> PIDs) async {
-    int _delay = (_messageFrequency * 1000 / PIDs.length).toInt();
-    for(int i = 0; i < PIDs.length; i++) {
-      await sendMessage(PIDs[i]);
-      Future.delayed(const Duration(milliseconds: 1000));
-    }
+  void _connectWebSocket() {
+    // Stelle die WebSocket-Verbindung her
+    _channel = WebSocketChannel.connect(
+      Uri.parse('ws://192.168.178.75:1880/data/store_dev'),
+    );
 
-    
+    // Setze den Verbindungsstatus auf "verbunden"
+    _isConnected.value = true;
+
+    // Schließe die Verbindung bei Fehlern oder wenn der WebSocket geschlossen wird
+    _channel?.stream.listen(
+      (message) {
+        print('Received: $message');
+      },
+      onDone: () {
+        _isConnected.value = false;
+      },
+      onError: (error) {
+        _isConnected.value = false;
+        print('Error: $error');
+      },
+    );
+  }
+
+  void _sendWebsocketMessage(String message) {
+    if (_channel != null && _isConnected.value) {
+      _channel?.sink.add(message);
+      print('Sent: $message');
+    } else {
+      print('Cannot send message. Not connected.');
+    }
   }
 
   //String get recordingButtonText => _isRecording ? "Aufnahme stoppen" : "Aufnahme starten";
