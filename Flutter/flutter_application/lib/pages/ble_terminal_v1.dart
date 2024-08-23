@@ -29,132 +29,6 @@ class DeviceScreen extends StatelessWidget {
   }
 }
 
-class DeviceScreenContent extends StatelessWidget {
-  final TextEditingController textController = TextEditingController();
-  final TextEditingController driveIdController = TextEditingController(text: '1');
-  final TextEditingController uuidController = TextEditingController(text: 'f437137a-0d5b-46f7-b204-8ca4b94177aa');
-
-  @override
-  Widget build(BuildContext context) {
-    return GetX<DeviceScreenController>(
-      builder: (controller) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Dropdown für Characteristics
-              Obx(() => DropdownButton<BluetoothCharacteristic>(
-                isExpanded: true,
-                value: controller.selectedCharacteristic.value,
-                onChanged: (BluetoothCharacteristic? newValue) {
-                  if (newValue != null) {
-                    controller.setCharacteristic(newValue);
-                  }
-                },
-                items: controller.characteristics.map((BluetoothCharacteristic characteristic) {
-                  return DropdownMenuItem<BluetoothCharacteristic>(
-                    value: characteristic,
-                    child: Text(characteristic.uuid.toString()),
-                  );
-                }).toList(),
-              )),
-
-              // Textfeld für Drive-ID mit Default-Wert
-              TextField(
-                controller: driveIdController,
-                decoration: InputDecoration(
-                  labelText: 'Drive-ID',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 10),
-
-              // Textfeld für UUID mit Default-Wert
-              TextField(
-                controller: uuidController,
-                decoration: InputDecoration(
-                  labelText: 'UUID',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 10),
-
-              // Nachrichtenanzeige (scrollbare Liste) mit angepasster Textgröße und Zeilenabstand
-              Expanded(
-                child: ListView.builder(
-                  itemCount: controller.messages.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(
-                        controller.messages[index],
-                        style: TextStyle(
-                          fontSize: 14, // Angepasste Textgröße
-                          height: 0.5, // Angepasster Zeilenabstand
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 10),
-
-              // Textfeld für Nachrichten
-              TextField(
-                controller: textController,
-                decoration: InputDecoration(
-                  labelText: 'Nachricht',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 10),
-
-              // Sende-Button
-              ElevatedButton(
-                onPressed: () {
-                  controller.sendMessage(textController.text);
-                  textController.clear();
-                },
-                child: Text('Senden'),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {
-                  controller.gatherData();
-                },
-                child: const Text("Get Data!"),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {
-                  controller._connectWebSocket();
-                },
-                child: const Text("Connect WS!"),
-              ),
-              ValueListenableBuilder<bool>(
-              valueListenable: controller._isConnected,
-              builder: (context, isConnected, child) {
-                return Container(
-                  width: 100,
-                  height: 100,
-                  color: isConnected ? Colors.green : Colors.red,
-                  child: Center(
-                    child: Text(
-                      'WS',
-                      style: TextStyle(color: Colors.white, fontSize: 24),
-                    ),
-                  ),
-                );
-              },
-            ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
 class DeviceScreenController extends GetxController {
   final RxList<BluetoothCharacteristic> characteristics = <BluetoothCharacteristic>[].obs;
   final Rx<BluetoothCharacteristic?> selectedCharacteristic = Rx<BluetoothCharacteristic?>(null);
@@ -171,6 +45,9 @@ class DeviceScreenController extends GetxController {
 
   WebSocketChannel? _channel;
   final ValueNotifier<bool> _isConnected = ValueNotifier<bool>(false);
+
+  final ValueNotifier<bool> _checkActivation = ValueNotifier<bool>(false);
+  Timer? _timer;
 
   void setCharacteristics(List<BluetoothCharacteristic> chars) {
     characteristics.value = chars;
@@ -293,14 +170,14 @@ class DeviceScreenController extends GetxController {
     // Datenstruktur erstellen
     DataStructure dataSet = createDataStructure(
       "f437137a-0d5b-46f7-b204-8ca4b94177aa", //uuid
-      "004", //driveid
+      "011", //driveid
       currentPosition.latitude.toString(), //lat
       currentPosition.longitude.toString(), //long
       extractHexResponse(dataNodeMap['speed'].toString()), //vehicle speed
       extractHexResponse(dataNodeMap['load'].toString()), //engine load
       extractHexResponse(dataNodeMap['rpm'].toString()), //engine rpm
       extractHexResponse(dataNodeMap['cool_temp'].toString()), //engine coolant temp
-      "13.2", //engine fuel consumption
+      "0.00", //engine fuel consumption
       extractHexResponse(dataNodeMap['abs_throt_pos'].toString()) //throttle position
     );
 
@@ -350,5 +227,182 @@ class DeviceScreenController extends GetxController {
     }
   }
 
+  /*
+  @override
+  void initState() {
+    super.initState();
+    _startWhileLoop();
+  }
+  */
+
+  void _startWhileLoop() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_checkActivation.value) {
+        _executeAction();
+      }
+    });
+  }
+
+  void _executeAction() {
+    // Aktion, die ausgeführt wird, wenn der boolesche Wert true ist
+    print("executing gather data!");
+    gatherData();
+  }
+
+  void _toggleCondition() {
+    _checkActivation.value = !_checkActivation.value;
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _checkActivation.dispose();
+    super.dispose();
+  }
+
+
   //String get recordingButtonText => _isRecording ? "Aufnahme stoppen" : "Aufnahme starten";
+}
+
+class DeviceScreenContent extends StatelessWidget {
+  final TextEditingController textController = TextEditingController();
+  final TextEditingController driveIdController = TextEditingController(text: '1');
+  final TextEditingController uuidController = TextEditingController(text: 'f437137a-0d5b-46f7-b204-8ca4b94177aa');
+
+  @override
+  Widget build(BuildContext context) {
+    return GetX<DeviceScreenController>(
+      builder: (controller) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Dropdown für Characteristics
+              Obx(() => DropdownButton<BluetoothCharacteristic>(
+                isExpanded: true,
+                value: controller.selectedCharacteristic.value,
+                onChanged: (BluetoothCharacteristic? newValue) {
+                  if (newValue != null) {
+                    controller.setCharacteristic(newValue);
+                  }
+                },
+                items: controller.characteristics.map((BluetoothCharacteristic characteristic) {
+                  return DropdownMenuItem<BluetoothCharacteristic>(
+                    value: characteristic,
+                    child: Text(characteristic.uuid.toString()),
+                  );
+                }).toList(),
+              )),
+
+              // Textfeld für Drive-ID mit Default-Wert
+              TextField(
+                controller: driveIdController,
+                decoration: InputDecoration(
+                  labelText: 'Drive-ID',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // Textfeld für UUID mit Default-Wert
+              TextField(
+                controller: uuidController,
+                decoration: InputDecoration(
+                  labelText: 'UUID',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // Nachrichtenanzeige (scrollbare Liste) mit angepasster Textgröße und Zeilenabstand
+              Expanded(
+                child: ListView.builder(
+                  itemCount: controller.messages.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(
+                        controller.messages[index],
+                        style: TextStyle(
+                          fontSize: 14, // Angepasste Textgröße
+                          height: 0.5, // Angepasster Zeilenabstand
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // Textfeld für Nachrichten
+              TextField(
+                controller: textController,
+                decoration: InputDecoration(
+                  labelText: 'Nachricht',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // Sende-Button
+              ElevatedButton(
+                onPressed: () {
+                  controller.sendMessage(textController.text);
+                  textController.clear();
+                },
+                child: Text('Senden'),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () {
+                  controller._startWhileLoop();
+                  controller._toggleCondition();
+                },
+                child: const Text("Start Cycle!"),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () {
+                  controller._connectWebSocket();
+                },
+                child: const Text("Connect WS!"),
+              ),
+              ValueListenableBuilder<bool>(
+              valueListenable: controller._isConnected,
+              builder: (context, isConnected, child) {
+                return Container(
+                  width: 100,
+                  height: 50,
+                  color: isConnected ? Colors.green : Colors.red,
+                  child: Center(
+                    child: Text(
+                      'WS',
+                      style: TextStyle(color: Colors.white, fontSize: 24),
+                    ),
+                  ),
+                );
+              },
+            ),
+            ValueListenableBuilder<bool>(
+              valueListenable: controller._checkActivation,
+              builder: (context, checkActivation, child) {
+                return Container(
+                  width: 100,
+                  height: 50,
+                  color: checkActivation ? Colors.green : Colors.red,
+                  child: Center(
+                    child: Text(
+                      'Data Collection',
+                      style: TextStyle(color: Colors.white, fontSize: 24),
+                    ),
+                  ),
+                );
+              },
+            ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
