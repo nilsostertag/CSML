@@ -217,8 +217,11 @@ class DeviceScreenController extends GetxController {
   }
   
   String convertToDec(String hexString) {
-    String result_hex = hexString.trim().substring(3);
+    print("orig hex ${hexString}");
+    String result_hex = hexString.replaceAll(' ', '').substring(4).trim();
+    print("1st hex ${result_hex}");
     String result = result_hex.hexToDEC().toString();
+    print(result);
 
     return result;
   }
@@ -280,11 +283,12 @@ class DeviceScreenController extends GetxController {
     }
 
     geo.Position currentPosition = await getLocation();
+    print("lat: ${currentPosition.latitude}, long: ${currentPosition.longitude}");
 
     // Datenstruktur erstellen
     DataStructure dataSet = createDataStructure(
       "f437137a-0d5b-46f7-b204-8ca4b94177aa", //uuid
-      "1", //driveid
+      "001", //driveid
       currentPosition.latitude.toString(), //lat
       currentPosition.longitude.toString(), //long
       convertToDec(dataNodeMap['speed'].toString()), //vehicle speed
