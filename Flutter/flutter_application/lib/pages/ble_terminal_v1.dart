@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application/pages/utils/data_structures.dart';
+import 'package:flutter_application/pages/utils/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:geolocator_platform_interface/src/models/position.dart' as geo;
 import 'package:get/get.dart';
 import 'dart:async';
 import 'package:number_system/number_system.dart';
@@ -215,11 +217,7 @@ class DeviceScreenController extends GetxController {
   }
   
   String convertToDec(String hexString) {
-    List<String> substrings = hexString.split(' ');
-    substrings = substrings..removeAt(1);
-    substrings = substrings..removeAt(0);
-
-    String result_hex = substrings.join('');
+    String result_hex = hexString.trim().substring(3);
     String result = result_hex.hexToDEC().toString();
 
     return result;
@@ -239,7 +237,7 @@ class DeviceScreenController extends GetxController {
 
     _sendWebsocketMessage(jsonPayload);
     print('message sent wo websocket!!');
-    }
+  }
 
   Future<String> extractData(List<String> receivedData) async {
     String jsonString;
@@ -281,18 +279,20 @@ class DeviceScreenController extends GetxController {
       }
     }
 
+    geo.Position currentPosition = await getLocation();
+
     // Datenstruktur erstellen
     DataStructure dataSet = createDataStructure(
       "f437137a-0d5b-46f7-b204-8ca4b94177aa", //uuid
-      "2", //driveid
-      "48.840550", //lat
-      "10.068598", //long
-      dataNodeMap['speed'].toString(), //vehicle speed
-      dataNodeMap['load'].toString(), //engine load
-      dataNodeMap['rpm'].toString(), //engine rpm
-      dataNodeMap['cool_temp'].toString(), //engine coolant temp
+      "1", //driveid
+      currentPosition.latitude.toString(), //lat
+      currentPosition.longitude.toString(), //long
+      convertToDec(dataNodeMap['speed'].toString()), //vehicle speed
+      convertToDec(dataNodeMap['load'].toString()), //engine load
+      convertToDec(dataNodeMap['rpm'].toString()), //engine rpm
+      convertToDec(dataNodeMap['cool_temp'].toString()), //engine coolant temp
       "13.2", //engine fuel consumption
-      dataNodeMap['abs_throt_pos'].toString() //throttle position
+      convertToDec(dataNodeMap['abs_throt_pos'].toString()) //throttle position
     );
 
     jsonString = jsonEncode(dataSet.toJson());
