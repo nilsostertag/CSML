@@ -216,14 +216,19 @@ class DeviceScreenController extends GetxController {
     }
   }
   
-  String convertToDec(String hexString) {
-    print("orig hex ${hexString}");
-    String result_hex = hexString.replaceAll(' ', '').substring(4).trim();
-    print("1st hex ${result_hex}");
-    String result = result_hex.hexToDEC().toString();
-    print(result);
+  String extractHexResponse(String hexString) {
+    if(hexString != 'None') {
+      String result = '';
+      print("orig hex ${hexString}");
+      print(hexString.length.toString());
+      String result_hex = hexString.replaceAll(' ', '').substring(4).trim();
+      print("1st hex '${result_hex}'");
+      print(result_hex.length.toString());
+      print(result);      
 
-    return result;
+      return result_hex;
+    }
+    return 'None';
   }
   
   Future<void> gatherData() async {
@@ -288,19 +293,19 @@ class DeviceScreenController extends GetxController {
     // Datenstruktur erstellen
     DataStructure dataSet = createDataStructure(
       "f437137a-0d5b-46f7-b204-8ca4b94177aa", //uuid
-      "001", //driveid
+      "004", //driveid
       currentPosition.latitude.toString(), //lat
       currentPosition.longitude.toString(), //long
-      convertToDec(dataNodeMap['speed'].toString()), //vehicle speed
-      convertToDec(dataNodeMap['load'].toString()), //engine load
-      convertToDec(dataNodeMap['rpm'].toString()), //engine rpm
-      convertToDec(dataNodeMap['cool_temp'].toString()), //engine coolant temp
+      extractHexResponse(dataNodeMap['speed'].toString()), //vehicle speed
+      extractHexResponse(dataNodeMap['load'].toString()), //engine load
+      extractHexResponse(dataNodeMap['rpm'].toString()), //engine rpm
+      extractHexResponse(dataNodeMap['cool_temp'].toString()), //engine coolant temp
       "13.2", //engine fuel consumption
-      convertToDec(dataNodeMap['abs_throt_pos'].toString()) //throttle position
+      extractHexResponse(dataNodeMap['abs_throt_pos'].toString()) //throttle position
     );
 
     jsonString = jsonEncode(dataSet.toJson());
-    print(jsonString);
+    //print(jsonString);
     return jsonString;
   }
 
