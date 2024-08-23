@@ -236,7 +236,7 @@ class DeviceScreenController extends GetxController {
   */
 
   void _startWhileLoop() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (_checkActivation.value) {
         _executeAction();
       }
