@@ -1,10 +1,10 @@
 import 'dart:convert';
 
+import 'package:geolocator_platform_interface/src/models/position.dart' as geo;
+import 'package:flutter_application/pages/utils/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/pages/utils/data_structures.dart';
-import 'package:flutter_application/pages/utils/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:geolocator_platform_interface/src/models/position.dart' as geo;
 import 'package:get/get.dart';
 import 'dart:async';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -47,6 +47,8 @@ class DeviceScreenController extends GetxController {
 
   final ValueNotifier<bool> _checkActivation = ValueNotifier<bool>(false);
   Timer? _timer;
+
+  Stream<geo.Position> positionStream = getLiveLocation();
 
   void setCharacteristics(List<BluetoothCharacteristic> chars) {
     characteristics.value = chars;
@@ -162,16 +164,22 @@ class DeviceScreenController extends GetxController {
         dataNodeMap['rel_throt_pos'] = _buffer_response;
       }
     }
+    
+    late String lat;
+    late String long;
 
-    geo.Position currentPosition = await getLocation();
-    print("lat: ${currentPosition.latitude}, long: ${currentPosition.longitude}");
+    positionStream.listen((geo.Position position) {
+      print('Position: ${position.latitude}, ${position.longitude}');
+      lat = position.latitude.toString();
+      long = position.latitude.toString();
+    });
 
     // Datenstruktur erstellen
     DataStructure dataSet = createDataStructure(
       "f437137a-0d5b-46f7-b204-8ca4b94177aa", //uuid
       "011", //driveid
-      currentPosition.latitude.toString(), //lat
-      currentPosition.longitude.toString(), //long
+      lat,
+      long,
       extractHexResponse(dataNodeMap['speed'].toString()), //vehicle speed
       extractHexResponse(dataNodeMap['load'].toString()), //engine load
       extractHexResponse(dataNodeMap['rpm'].toString()), //engine rpm

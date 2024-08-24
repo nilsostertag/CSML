@@ -17,7 +17,7 @@ dependencies:
   web_socket_channel: ^2.2.0
 
   geolocator: ^9.0.2
-  
+
   flutter_blue:
   get:
   permission_handler:
