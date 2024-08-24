@@ -7,7 +7,6 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:geolocator_platform_interface/src/models/position.dart' as geo;
 import 'package:get/get.dart';
 import 'dart:async';
-import 'package:number_system/number_system.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class DeviceScreen extends StatelessWidget {
