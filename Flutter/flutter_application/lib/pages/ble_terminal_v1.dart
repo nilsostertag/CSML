@@ -48,7 +48,28 @@ class DeviceScreenController extends GetxController {
   final ValueNotifier<bool> _checkActivation = ValueNotifier<bool>(false);
   Timer? _timer;
 
-  Stream<geo.Position> positionStream = getLiveLocation();
+  late String _lat;
+  late String _long;
+  late StreamSubscription<geo.Position> _positionSubscription;
+
+  @override
+  void onInit() {
+    super.onInit();
+    
+    // Initialisiere und höre den Positionstream ab
+    _positionSubscription = getLiveLocation().listen((geo.Position position) {
+      print('Position: ${position.latitude}, ${position.longitude}');
+      _lat = position.latitude.toString();
+      _long = position.longitude.toString();
+    });
+  }
+
+  @override
+  void onClose() {
+    // Beende den Stream, wenn der Controller zerstört wird
+    _positionSubscription.cancel();
+    super.onClose();
+  }
 
   void setCharacteristics(List<BluetoothCharacteristic> chars) {
     characteristics.value = chars;
@@ -165,21 +186,12 @@ class DeviceScreenController extends GetxController {
       }
     }
     
-    late String lat;
-    late String long;
-
-    positionStream.listen((geo.Position position) {
-      print('Position: ${position.latitude}, ${position.longitude}');
-      lat = position.latitude.toString();
-      long = position.latitude.toString();
-    });
-
     // Datenstruktur erstellen
     DataStructure dataSet = createDataStructure(
       "f437137a-0d5b-46f7-b204-8ca4b94177aa", //uuid
-      "011", //driveid
-      lat,
-      long,
+      "033", //driveid
+      _lat,
+      _long,
       extractHexResponse(dataNodeMap['speed'].toString()), //vehicle speed
       extractHexResponse(dataNodeMap['load'].toString()), //engine load
       extractHexResponse(dataNodeMap['rpm'].toString()), //engine rpm
@@ -243,7 +255,7 @@ class DeviceScreenController extends GetxController {
   */
 
   void _startWhileLoop() {
-    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_checkActivation.value) {
         _executeAction();
       }
@@ -264,8 +276,10 @@ class DeviceScreenController extends GetxController {
   void dispose() {
     _timer?.cancel();
     _checkActivation.dispose();
+    _positionSubscription.cancel();
     super.dispose();
   }
+
 
 
   //String get recordingButtonText => _isRecording ? "Aufnahme stoppen" : "Aufnahme starten";
