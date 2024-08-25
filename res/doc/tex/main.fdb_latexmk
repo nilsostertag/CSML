@@ -1,18 +1,17 @@
 # Fdb version 4
-["biber main"] 0 "main.bcf" "main.bbl" "main" 1723752795.19734 -1
-  "latexlit.bib" 1719307186 5212 7893c48df1cdba3cf5f2e53f6581553f ""
-  "main.bcf" 1723752794 108475 72d8428ddb77df58f06846855e1e36e6 "pdflatex"
+["biber main"] 1724524173.639 "main.bcf" "main.bbl" "main" 1724583630.53403 0
+  "main.bcf" 1724583630 108475 72d8428ddb77df58f06846855e1e36e6 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["makeindex main.idx"] 1723742980.02955 "main.idx" "main.ind" "main" 1723752795.19693 0
-  "main.idx" 1723752792 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+["makeindex main.idx"] 1724524342.67997 "main.idx" "main.ind" "main" 1724583630.53362 0
+  "main.idx" 1724583627 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
   (generated)
   "main.ilg"
   "main.ind"
   (rewritten before read)
-["pdflatex"] 1723752790.43495 "e:/MLD Studium/Sem02/Projektarbeit/Coding/CarSenseML/res/doc/tex/main.tex" "main.pdf" "main" 1723752795.19799 0
+["pdflatex"] 1724583625.55531 "e:/MLD Studium/Sem02/Projektarbeit/Coding/CarSenseML/res/doc/tex/main.tex" "main.pdf" "main" 1724583630.53463 0
   "C:/Users/NilsO/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1723639100 292165 9b70094477cfceb481089280f77d344b ""
   "C:/Users/NilsO/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1723561922 24248959 d02e8ccf630a30d8ce9858347a3b2e58 ""
   "R:/MiKTeX/fonts/enc/dvips/base/8r.enc" 1458473887 4993 80dc9bab7f31fb78a000ccfed0e27cab ""
@@ -27,6 +26,7 @@
   "R:/MiKTeX/fonts/tfm/adobe/ncntrsbk/pncr8c.tfm" 1136768654 1336 990dabf7f4b96ad32afebd2a44ddc16b ""
   "R:/MiKTeX/fonts/tfm/adobe/ncntrsbk/pncr8r.tfm" 1136768654 3824 bc0da12160f5765b82e6719f9e7a7b7a ""
   "R:/MiKTeX/fonts/tfm/adobe/ncntrsbk/pncr8t.tfm" 1136768654 5528 00d888307ad513c6cc0420ee9f900b6f ""
+  "R:/MiKTeX/fonts/tfm/adobe/ncntrsbk/pncri8r.tfm" 1136768654 4148 832add51bc8aa63233d192e6f515b012 ""
   "R:/MiKTeX/fonts/tfm/adobe/ncntrsbk/pncri8t.tfm" 1136768654 6064 dc9093c98b949ca3f227ed574f7e5a0c ""
   "R:/MiKTeX/fonts/tfm/adobe/ncntrsbk/pncro8r.tfm" 1136768654 3988 970d6bc4f82d43f1cc81668af32fb932 ""
   "R:/MiKTeX/fonts/tfm/adobe/ncntrsbk/pncro8t.tfm" 1136768654 5660 be24f57deed757dec7d09a1a776a4493 ""
@@ -51,12 +51,14 @@
   "R:/MiKTeX/fonts/type1/urw/courier/ucrr8a.pfb" 1136846148 45758 19968a0990191524e34e1994d4a31cb6 ""
   "R:/MiKTeX/fonts/type1/urw/ncntrsbk/uncb8a.pfb" 1136849748 48864 ca80c86f21221df34f4beaeb24b36f4e ""
   "R:/MiKTeX/fonts/type1/urw/ncntrsbk/uncr8a.pfb" 1136849748 46830 cd5096196d3593e2833f96c3de8bc518 ""
+  "R:/MiKTeX/fonts/type1/urw/ncntrsbk/uncri8a.pfb" 1136849748 45832 158a4a02ef8850fd37bf56026965e779 ""
   "R:/MiKTeX/fonts/vf/adobe/avantgar/pagd8t.vf" 1136768654 2348 2e6761168126ba9a008731179fe938e3 ""
   "R:/MiKTeX/fonts/vf/adobe/avantgar/pagk8t.vf" 1136768654 2356 b1bad47972ebc061e37998cb9f9560b5 ""
   "R:/MiKTeX/fonts/vf/adobe/courier/pcrr8t.vf" 1136765053 2184 8475af1b9cfa983db5f46f5ed4b8f9f7 ""
   "R:/MiKTeX/fonts/vf/adobe/ncntrsbk/pncb8t.vf" 1136768654 2352 b1706abcd2090ce25685f40b305b6a94 ""
   "R:/MiKTeX/fonts/vf/adobe/ncntrsbk/pncr8c.vf" 1136768654 3556 d62234d895fc58316ef3155c185e700f ""
   "R:/MiKTeX/fonts/vf/adobe/ncntrsbk/pncr8t.vf" 1136768654 2348 87c90651354858e06d6644a0ccb07e13 ""
+  "R:/MiKTeX/fonts/vf/adobe/ncntrsbk/pncri8t.vf" 1136768654 2324 13f3ee6610673fbd288ead1fd989cc7c ""
   "R:/MiKTeX/fonts/vf/adobe/ncntrsbk/pncro8t.vf" 1136768654 2352 5ddd9249d1e3699d14d248f4b254bc38 ""
   "R:/MiKTeX/tex/context/base/mkii/supp-pdf.mkii" 1580390158 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "R:/MiKTeX/tex/generic/atbegshi/atbegshi.sty" 1575571100 24708 5584a51a7101caf7e6bbf1fc27d8f7b1 ""
@@ -293,22 +295,23 @@
   "R:/MiKTeX/tex/latex/xpatch/xpatch.sty" 1585221260 8510 7803f78066c4f9d008405191a4b43073 ""
   "R:/MiKTeX/tex/latex/xstring/xstring.sty" 1693735632 123 a302f2c651a95033260db60e51527ae8 ""
   "ausarbeitung.cls" 1723148002 15074 1e25ece82dd528d9eca8da47c39aa5d3 ""
-  "e:/MLD Studium/Sem02/Projektarbeit/Coding/CarSenseML/res/doc/tex/main.tex" 1723752779 58668 09fac6e2a564da62d676ab506eba6f5b ""
+  "e:/MLD Studium/Sem02/Projektarbeit/Coding/CarSenseML/res/doc/tex/main.tex" 1724583624 60830 ea089091b22ec60c6408f8625735e2d1 ""
   "images/app_conc_home.png" 1723732592 145920 b1aac76ea1071a0307a7fc8c332fac73 ""
   "images/app_conc_rec.png" 1723732784 35180 6aef7c57462c3ca47156945a8bb3e4e2 ""
+  "images/comp_dia_raspi.PNG" 1724519404 53826 9ce355992f725f2ea75ab50acae8a88a ""
   "images/component_diagramm_overview.png" 1723201288 73259 e3dc3a2d50f6f96e4cb00ce562614115 ""
   "images/htw-aalen.pdf" 1719307186 11222 64ce5a1dc53002ef8d3743668038b8a4 ""
   "images/pinout_explanation.png" 1723742856 480030 cd7cc705e883d42ed762890d8ac93033 ""
-  "main.aux" 1723752794 19257 e7cf24c065adaea6cf8af114f296bdaa "pdflatex"
-  "main.bbl" 1723732143 486 76d65a242ec496c9b4361af646ff12cb "biber main"
-  "main.ind" 1723742980 0 d41d8cd98f00b204e9800998ecf8427e "makeindex main.idx"
-  "main.lof" 1723752794 442 b56e0d36f73417e6f03bbf864f03d128 "pdflatex"
-  "main.lol" 1723752794 265 d387a0cf2930ed0adc725a6238343894 "pdflatex"
-  "main.lot" 1723752794 321 3c7af88e35e07abdf5d5444fadc70b39 "pdflatex"
-  "main.out" 1723752793 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
-  "main.run.xml" 1723752794 2364 269baf901c1c05b4793217545a3bd9a1 "pdflatex"
-  "main.tex" 1723752779 58668 09fac6e2a564da62d676ab506eba6f5b ""
-  "main.toc" 1723752794 2576 aadeb180676957fa2451142f84b6ca92 "pdflatex"
+  "main.aux" 1724583630 20835 7b47084f4eb6ee69bdc6a165b033d2c6 "pdflatex"
+  "main.bbl" 1724524209 486 76d65a242ec496c9b4361af646ff12cb "biber main"
+  "main.ind" 1724524342 0 d41d8cd98f00b204e9800998ecf8427e "makeindex main.idx"
+  "main.lof" 1724583630 578 904b147569e5d6c7134684748986b4dd "pdflatex"
+  "main.lol" 1724583630 395 7e184e5e9d002b16e3006e66151eda55 "pdflatex"
+  "main.lot" 1724583630 321 3c7af88e35e07abdf5d5444fadc70b39 "pdflatex"
+  "main.out" 1724583628 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "main.run.xml" 1724583630 2364 269baf901c1c05b4793217545a3bd9a1 "pdflatex"
+  "main.tex" 1724583624 60830 ea089091b22ec60c6408f8625735e2d1 ""
+  "main.toc" 1724583630 2700 1a4219173f2d744f1cf6febb24592465 "pdflatex"
   "xtotalcount.sty" 1719307186 3300 a67990bdc2416026fe9e202945054feb ""
   (generated)
   "main.aux"

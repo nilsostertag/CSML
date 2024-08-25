@@ -1,20 +1,23 @@
-#import
 import urllib.request
 import json
-
-EXAMPLE_CALL = 'https://nominatim.openstreetmap.org/reverse?lat=48.636472&lon=10.166313&format=json&maxspeed=*'
 
 class location_services:
     def __init__(self):
         self.api = None
 
-    def get_speedlimit(self, position: tuple) -> int:
-        lat, long = position
-        contents = urllib.request.urlopen(EXAMPLE_CALL).read()
-        json_contents = json.loads(contents)
-        print(json_contents['address']['city_district'])
-
-
-if __name__ == '__main__':
-    ls = location_services()
-    ls.get_speedlimit(position=(1,2))
+    def get_speed_limit_OSM_API(self, position: dict) -> int:
+        lat, long = position['lat'], position['long']
+        api_call = f'https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={long}&format=json'
+        contents = urllib.request.urlopen(api_call).read()
+        api_response = json.loads(contents)
+        
+        osm_id = api_response['osm_id']
+        api_call = f'https://overpass-api.de/api/interpreter?data=[out:json];way({osm_id});out;'
+        print(api_call)
+        contents = urllib.request.urlopen(api_call).read()
+        api_response = json.loads(contents)
+        try:
+            return int(api_response['elements'][0]['tags']['maxspeed'])
+        except:
+            return -1
+        

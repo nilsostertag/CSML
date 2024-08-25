@@ -11,7 +11,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 class DeviceScreen extends StatelessWidget {
   final BluetoothDevice device;
-
+  
   const DeviceScreen({super.key, required this.device});
 
   @override

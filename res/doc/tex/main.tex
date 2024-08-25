@@ -3,6 +3,7 @@
 
 \usepackage{adjustbox} % Für die Anpassung der Tabelle an die Seitenbreite
 \usepackage{geometry} % Für die Seitenränder
+\usepackage{listings}
 
 % ----------------------------------------------------------------------
 
@@ -270,6 +271,11 @@ Flutter bietet zudem eine umfangreiche Sammlung von Widgets, die die Entwicklung
 
 Ein weiteres bemerkenswertes Merkmal von Flutter ist die hohe Performance, die durch die direkte Kompilierung des Dart-Codes in native Maschinensprache erreicht wird. Dies führt zu schnelleren Startzeiten und einer flüssigen Benutzererfahrung, da der Code nicht durch eine zusätzliche Schicht wie eine virtuelle Maschine oder ein Webview interpretiert werden muss. Die Performance-Optimierung wird weiter durch die effiziente Nutzung von GPU-Beschleunigung und die Unterstützung für Hardware-gestützte Animationen verstärkt.
 
+\section{Multi-Output Regression}
+\label{sec:foundations_multioutputregression}
+
+\subsection*{Random Forest}
+
 %---
 \chapter{Umsetzung und Implementierung}
 \label{cha:implement}
@@ -277,82 +283,194 @@ Ein weiteres bemerkenswertes Merkmal von Flutter ist die hohe Performance, die d
 \section{Anforderungsanalyse}
 \label{sec:implement_requirements}
 
-Die Anforderungsanalyse bildet das Herzstück eines erfolgreichen Projekts, da sie die Grundlage für die Entwicklung und Implementierung bildet. In dieser Phase wird der Rahmen für alle nachfolgenden Aktivitäten festgelegt, indem die Bedürfnisse, Erwartungen und spezifischen Anforderungen des Projekts klar definiert werden. Diese Analyse ist von entscheidender Bedeutung, um sicherzustellen, dass das Endprodukt oder Ergebnis den definierten Zielen entspricht und den gewünschten Nutzen bietet.
+Die Anforderungsanalyse bildet das Herzstück eines erfolgreichen Projekts, da sie die Grundlage für die Entwicklung und 
+Implementierung bildet. In dieser Phase wird der Rahmen für alle nachfolgenden Aktivitäten festgelegt, indem die Bedürfnisse,
+Erwartungen und spezifischen Anforderungen des Projekts klar definiert werden. Diese Analyse ist von entscheidender Bedeutung, 
+um sicherzustellen, dass das Endprodukt oder Ergebnis den definierten Zielen entspricht und den gewünschten Nutzen bietet.
 
 \begin{itemize}
-  \item \textbf{Data Aquisition von Fahrdaten}\\ Das erste fundamentale Ziel zur Umsetzung der Projektidee ist die Erhebung von Fahrdaten in Echtzeit. Hierfür muss geklärt werden, welche spezifischen Daten erfasst werden sollen und auf welchem Weg dies erfolgen soll. Neben der Wahl der Datenquellen, wie OBD-II-Schnittstellen, GPS-Modulen und weiteren Sensoren, muss auch die Datenübertragungstechnologie festgelegt werden, um eine zuverlässige und effiziente Kommunikation sicherzustellen. Dies könnte beispielsweise über mobile Netzwerke, WLAN oder spezielle IoT-Protokolle erfolgen. Weiterhin ist zu definieren, mit welcher Frequenz die Daten erhoben und an das Backend zur Verarbeitung weitergeleitet werden, um sowohl die Datenqualität als auch die Systemressourcen optimal zu nutzen.
+  \item \textbf{Data Aquisition von Fahrdaten}\\ Das erste fundamentale Ziel zur Umsetzung der Projektidee ist die Erhebung von 
+  Fahrdaten in Echtzeit. Hierfür muss geklärt werden, welche spezifischen Daten erfasst werden sollen und auf welchem Weg dies 
+  erfolgen soll. Neben der Wahl der Datenquellen, wie OBD-II-Schnittstellen, GPS-Modulen und weiteren Sensoren, muss auch die 
+  Datenübertragungstechnologie festgelegt werden, um eine zuverlässige und effiziente Kommunikation sicherzustellen. Dies könnte 
+  beispielsweise über mobile Netzwerke, WLAN oder spezielle IoT-Protokolle erfolgen. Weiterhin ist zu definieren, mit welcher 
+  Frequenz die Daten erhoben und an das Backend zur Verarbeitung weitergeleitet werden, um sowohl die Datenqualität als auch die
+  Systemressourcen optimal zu nutzen.
   
-  Ein weiterer kritischer Aspekt ist die Integration zusätzlicher Datenquellen, die über OBD-II-Daten hinausgehen, um umfassendere Analysen zu ermöglichen. Dazu zählen unter anderem GPS-Daten zur genauen Standortbestimmung, UUIDs zur Identifikation einzelner Fahrzeuge oder Fahrer sowie möglicherweise Umweltdaten (z.B. Wetterbedingungen). Diese zusätzlichen Daten können helfen, Kontextinformationen zu den Fahrdaten zu liefern, die für präzisere Analysen und Vorhersagen unerlässlich sind.
+  Ein weiterer kritischer Aspekt ist die Integration zusätzlicher Datenquellen, die über OBD-II-Daten hinausgehen, um umfassendere
+  Analysen zu ermöglichen. Dazu zählen unter anderem GPS-Daten zur genauen Standortbestimmung, UUIDs zur Identifikation einzelner 
+  Fahrzeuge oder Fahrer sowie möglicherweise Umweltdaten (z.B. Wetterbedingungen). Diese zusätzlichen Daten können helfen, 
+  Kontextinformationen zu den Fahrdaten zu liefern, die für präzisere Analysen und Vorhersagen unerlässlich sind.
   
-  Zudem sollte auch die Datensicherheit und der Datenschutz von Anfang an berücksichtigt werden. Dies betrifft sowohl die sichere Übertragung der Daten als auch deren Speicherung und Verarbeitung. Es ist essenziell, dass alle erhobenen Daten entsprechend den geltenden Datenschutzbestimmungen behandelt werden und Maßnahmen zur Sicherung der Datenintegrität und -vertraulichkeit implementiert werden. Schließlich sollte ein robustes Monitoring- und Wartungssystem eingerichtet werden, um die Datenakquise kontinuierlich zu überwachen und gegebenenfalls zeitnah Anpassungen vorzunehmen.
+  Zudem sollte auch die Datensicherheit und der Datenschutz von Anfang an berücksichtigt werden. Dies betrifft sowohl die sichere 
+  Übertragung der Daten als auch deren Speicherung und Verarbeitung. Es ist essenziell, dass alle erhobenen Daten entsprechend den 
+  geltenden Datenschutzbestimmungen behandelt werden und Maßnahmen zur Sicherung der Datenintegrität und -vertraulichkeit implementiert 
+  werden. Schließlich sollte ein robustes Monitoring- und Wartungssystem eingerichtet werden, um die Datenakquise kontinuierlich zu überwachen und gegebenenfalls zeitnah Anpassungen vorzunehmen.
   
-  \item \textbf{Datenaustausch zwischen Client und Backend}\\ Der Datenaustausch zwischen dem Client, in diesem Fall einer Mobile-App, und dem Backend ist essenziell für die Funktionalität und Effizienz des gesamten Systems. Neben der reinen Datenerhebung spielt die sichere und performante Übermittlung von Daten eine zentrale Rolle. Dabei ist es wichtig, Technologien zu wählen, die nicht nur eine sichere Verbindung, sondern auch einen schnellen und zuverlässigen Austausch von Anfragen und Datensätzen gewährleisten.
+  \item \textbf{Datenaustausch zwischen Client und Backend}\\ Der Datenaustausch zwischen dem Client, in diesem Fall einer Mobile-App, 
+  und dem Backend ist essenziell für die Funktionalität und Effizienz des gesamten Systems. Neben der reinen Datenerhebung spielt die 
+  sichere und performante Übermittlung von Daten eine zentrale Rolle. Dabei ist es wichtig, Technologien zu wählen, die nicht nur eine 
+  sichere Verbindung, sondern auch einen schnellen und zuverlässigen Austausch von Anfragen und Datensätzen gewährleisten.
   
-  Eine wesentliche Voraussetzung für den erfolgreichen Datenaustausch ist die Definition klarer und zielorientierter Rahmenbedingungen. Dazu gehören die Spezifikation der verschiedenen Anfragetypen, die Gestaltung effizienter und skalierbarer Datenstrukturen sowie die Berücksichtigung der erforderlichen Flexibilität des Backends im Entwicklungsverlauf. Das Backend muss in der Lage sein, auf sich ändernde Anforderungen schnell zu reagieren und gegebenenfalls neue Datenstrukturen oder Schnittstellen zu implementieren, ohne dabei die Stabilität oder Sicherheit des Systems zu gefährden.
+  Eine wesentliche Voraussetzung für den erfolgreichen Datenaustausch ist die Definition klarer und zielorientierter Rahmenbedingungen. 
+  Dazu gehören die Spezifikation der verschiedenen Anfragetypen, die Gestaltung effizienter und skalierbarer Datenstrukturen sowie die 
+  Berücksichtigung der erforderlichen Flexibilität des Backends im Entwicklungsverlauf. Das Backend muss in der Lage sein, auf sich 
+  ändernde Anforderungen schnell zu reagieren und gegebenenfalls neue Datenstrukturen oder Schnittstellen zu implementieren, ohne dabei 
+  die Stabilität oder Sicherheit des Systems zu gefährden.
   
-  Darüber hinaus spielt die Wahl der richtigen Protokolle und Authentifizierungsmechanismen eine entscheidende Rolle. Protokolle wie HTTPS oder WebSocket bieten eine gute Basis für die sichere Übertragung von Daten, während Authentifizierungsverfahren wie OAuth oder JWT (JSON Web Tokens) sicherstellen, dass nur autorisierte Clients Zugriff auf sensible Daten erhalten. Auch die Handhabung von Fehlern und Ausnahmen im Datenaustausch sollte frühzeitig definiert werden, um eine hohe Robustheit und Benutzerfreundlichkeit der Mobile-App zu gewährleisten.
+  Darüber hinaus spielt die Wahl der richtigen Protokolle und Authentifizierungsmechanismen eine entscheidende Rolle. Protokolle wie HTTPS 
+  oder WebSocket bieten eine gute Basis für die sichere Übertragung von Daten, während Authentifizierungsverfahren wie OAuth oder JWT 
+  (JSON Web Tokens) sicherstellen, dass nur autorisierte Clients Zugriff auf sensible Daten erhalten. Auch die Handhabung von Fehlern und 
+  Ausnahmen im Datenaustausch sollte frühzeitig definiert werden, um eine hohe Robustheit und Benutzerfreundlichkeit der Mobile-App zu 
+  gewährleisten.
   
-  Schließlich ist es von Vorteil, Mechanismen zur Überwachung und Protokollierung des Datenaustauschs zu integrieren. Diese ermöglichen es, den Datenverkehr zu analysieren, potenzielle Schwachstellen zu identifizieren und die Leistung des Systems kontinuierlich zu optimieren.
+  Schließlich ist es von Vorteil, Mechanismen zur Überwachung und Protokollierung des Datenaustauschs zu integrieren. Diese ermöglichen 
+  es, den Datenverkehr zu analysieren, potenzielle Schwachstellen zu identifizieren und die Leistung des Systems kontinuierlich zu optimieren.
   
-  Durch die Berücksichtigung all dieser Aspekte kann sichergestellt werden, dass der Datenaustausch zwischen Client und Backend nicht nur reibungslos und sicher, sondern auch zukunftsfähig und anpassungsfähig gestaltet wird.
+  Durch die Berücksichtigung all dieser Aspekte kann sichergestellt werden, dass der Datenaustausch zwischen Client und Backend nicht 
+  nur reibungslos und sicher, sondern auch zukunftsfähig und anpassungsfähig gestaltet wird.
   
-  \item \textbf{Datenvorverarbeitung}\\ Bei der Datenvorverarbeitung müssen zunächst die Datenquellen und -typen genau erfasst werden. Hierzu gehört das Verständnis der Struktur, Qualität und Vollständigkeit der Rohdaten. Beispielsweise sollten inkonsistente oder fehlende Werte identifiziert und Methoden zur Datenbereinigung, wie etwa die Imputation fehlender Werte oder das Entfernen von Duplikaten, festgelegt werden. Anschließend werden die benötigten Vorverarbeitungsschritte definiert, wie z.B. Datenbereinigung, -transformation und -normalisierung. Diese Schritte sind notwendig, um Datenfehler zu korrigieren, Konsistenz zu gewährleisten und die Daten in ein Format zu bringen, das für die nachfolgende Analyse geeignet ist.
+  \item \textbf{Datenvorverarbeitung}\\ Bei der Datenvorverarbeitung müssen zunächst die Datenquellen und -typen genau erfasst werden. 
+  Hierzu gehört das Verständnis der Struktur, Qualität und Vollständigkeit der Rohdaten. Beispielsweise sollten inkonsistente oder fehlende 
+  Werte identifiziert und Methoden zur Datenbereinigung, wie etwa die Imputation fehlender Werte oder das Entfernen von Duplikaten, 
+  festgelegt werden. Anschließend werden die benötigten Vorverarbeitungsschritte definiert, wie z.B. Datenbereinigung, -transformation 
+  und -normalisierung. Diese Schritte sind notwendig, um Datenfehler zu korrigieren, Konsistenz zu gewährleisten und die Daten in ein 
+  Format zu bringen, das für die nachfolgende Analyse geeignet ist.
   
-  Ein Beispiel für eine zu beachtende Bedingung ist die Erkennung und Behandlung von Ausreißern, die die Ergebnisse verfälschen könnten. Hier könnte eine Vorverarbeitungsmethode wie die Interquartilsabstandsmethode angewendet werden, um extreme Werte zu identifizieren und entweder zu entfernen oder zu transformieren. Ein weiteres Beispiel ist die Normalisierung von Daten, um unterschiedliche Skalen zwischen Merkmalen zu harmonisieren, insbesondere wenn Machine Learning Algorithmen wie k-Means-Clustering oder neuronale Netze eingesetzt werden, die sensitiv auf solche Unterschiede reagieren.
+  Ein Beispiel für eine zu beachtende Bedingung ist die Erkennung und Behandlung von Ausreißern, die die Ergebnisse verfälschen könnten. 
+  Hier könnte eine Vorverarbeitungsmethode wie die Interquartilsabstandsmethode angewendet werden, um extreme Werte zu identifizieren und 
+  entweder zu entfernen oder zu transformieren. Ein weiteres Beispiel ist die Normalisierung von Daten, um unterschiedliche Skalen zwischen 
+  Merkmalen zu harmonisieren, insbesondere wenn Machine Learning Algorithmen wie k-Means-Clustering oder neuronale Netze eingesetzt werden, 
+  die sensitiv auf solche Unterschiede reagieren.
   
-  Zusätzlich sollten auch Anforderungen an die Skalierbarkeit und Effizienz der Vorverarbeitung festgelegt werden, um sicherzustellen, dass die Prozesse auch bei großen Datenmengen und in unterschiedlichen Anwendungsfällen reibungslos funktionieren. In diesem Zusammenhang ist es wichtig, die Performance der Vorverarbeitungsschritte zu analysieren und gegebenenfalls parallele Verarbeitungstechniken oder verteilte Systeme zu implementieren, um die Verarbeitungsgeschwindigkeit zu optimieren.
+  Zusätzlich sollten auch Anforderungen an die Skalierbarkeit und Effizienz der Vorverarbeitung festgelegt werden, um sicherzustellen, 
+  dass die Prozesse auch bei großen Datenmengen und in unterschiedlichen Anwendungsfällen reibungslos funktionieren. In diesem Zusammenhang 
+  ist es wichtig, die Performance der Vorverarbeitungsschritte zu analysieren und gegebenenfalls parallele Verarbeitungstechniken oder 
+  verteilte Systeme zu implementieren, um die Verarbeitungsgeschwindigkeit zu optimieren.
   
-  Schließlich wird in der Anforderungsanalyse auch festgelegt, welche Tools und Technologien für die Umsetzung der Vorverarbeitungsschritte benötigt werden. Dies könnte beispielsweise die Auswahl geeigneter Programmiersprachen, Bibliotheken wie Python mit Pandas für die Datenmanipulation beinhalten.
+  Schließlich wird in der Anforderungsanalyse auch festgelegt, welche Tools und Technologien für die Umsetzung der Vorverarbeitungsschritte 
+  benötigt werden. Dies könnte beispielsweise die Auswahl geeigneter Programmiersprachen, Bibliotheken wie Python mit Pandas für die 
+  Datenmanipulation beinhalten.
   
-  \item \textbf{Machine Learning Model}\\ Die Entwicklung von Machine-Learning-Algorithmen zur Fahrdatenanalyse zur Charakterisierung eines Fahrstils ist ein faszinierendes und komplexes Unterfangen, das tiefgreifendes Verständnis sowohl der Fahrdynamik als auch der Datenwissenschaft erfordert. Nachdem die Datenerhebung und Vorverarbeitung bereits abgeschlossen sind, beginnt der eigentliche Kern der Arbeit: das Design, die Implementierung und die Verfeinerung der Algorithmen, die diese Daten nutzen, um präzise und nützliche Einsichten in den Fahrstil zu gewinnen.
+  \item \textbf{Machine Learning Model}\\ Die Entwicklung von Machine-Learning-Algorithmen zur Fahrdatenanalyse zur Charakterisierung 
+  eines Fahrstils ist ein faszinierendes und komplexes Unterfangen, das tiefgreifendes Verständnis sowohl der Fahrdynamik als auch der 
+  Datenwissenschaft erfordert. Nachdem die Datenerhebung und Vorverarbeitung bereits abgeschlossen sind, beginnt der eigentliche Kern 
+  der Arbeit: das Design, die Implementierung und die Verfeinerung der Algorithmen, die diese Daten nutzen, um präzise und nützliche 
+  Einsichten in den Fahrstil zu gewinnen.
   
-  Der erste Schritt in der Algorithmus-Entwicklung ist die Auswahl und Anpassung der geeigneten Machine-Learning-Modelle. In der Regel werden unterschiedliche Modellklassen in Betracht gezogen, wie beispielsweise überwachtes Lernen, unüberwachtes Lernen oder semi-überwachtes Lernen. Überwachtes Lernen ist oft bevorzugt, da es bei der Charakterisierung von Fahrstilen ermöglicht, klare Muster und Klassifikationen basierend auf gelabelten Daten zu erkennen. Für diesen Zweck können Algorithmen wie Entscheidungsbäume, Random Forests, Support Vector Machines (SVM) oder neuronale Netze verwendet werden. Die Wahl des Modells hängt stark von der Natur der Daten und den spezifischen Anforderungen der Analyse ab.
+  Der erste Schritt in der Algorithmus-Entwicklung ist die Auswahl und Anpassung der geeigneten Machine-Learning-Modelle. In der Regel 
+  werden unterschiedliche Modellklassen in Betracht gezogen, wie beispielsweise überwachtes Lernen, unüberwachtes Lernen oder 
+  semi-überwachtes Lernen. Überwachtes Lernen ist oft bevorzugt, da es bei der Charakterisierung von Fahrstilen ermöglicht, 
+  klare Muster und Klassifikationen basierend auf gelabelten Daten zu erkennen. Für diesen Zweck können Algorithmen wie 
+  Entscheidungsbäume, Random Forests, Support Vector Machines (SVM) oder neuronale Netze verwendet werden. Die Wahl des 
+  Modells hängt stark von der Natur der Daten und den spezifischen Anforderungen der Analyse ab.
   
-  Nachdem das Modell ausgewählt wurde, erfolgt die Feature-Auswahl, die für die Leistungsfähigkeit des Modells entscheidend ist. Bei der Analyse von Fahrdaten können relevante Merkmale, sogenannte Features, wie Geschwindigkeit, Beschleunigung, Bremsverhalten, Lenkbewegungen, und GPS-Koordinaten in Betracht gezogen werden. Die Auswahl der richtigen Features ist entscheidend, um ein Modell zu entwickeln, das in der Lage ist, subtile Unterschiede in den Fahrstilen zu erkennen. Hierbei können auch fortgeschrittene Techniken wie Feature Engineering zur Generierung neuer Features aus den vorhandenen Daten hilfreich sein. Diese neuen Features könnten etwa die Häufigkeit von abrupten Bremsungen oder das Verhältnis von Stadt- zu Landstraßenfahrten umfassen.
+  Nachdem das Modell ausgewählt wurde, erfolgt die Feature-Auswahl, die für die Leistungsfähigkeit des Modells entscheidend ist. Bei der 
+  Analyse von Fahrdaten können relevante Merkmale, sogenannte Features, wie Geschwindigkeit, Beschleunigung, Bremsverhalten, Lenkbewegungen, 
+  und GPS-Koordinaten in Betracht gezogen werden. Die Auswahl der richtigen Features ist entscheidend, um ein Modell zu entwickeln, 
+  das in der Lage ist, subtile Unterschiede in den Fahrstilen zu erkennen. Hierbei können auch fortgeschrittene Techniken wie Feature 
+  Engineering zur Generierung neuer Features aus den vorhandenen Daten hilfreich sein. Diese neuen Features könnten etwa die Häufigkeit 
+  von abrupten Bremsungen oder das Verhältnis von Stadt- zu Landstraßenfahrten umfassen.
   
-  Im nächsten Schritt wird das Modell mit den vorbereiteten Daten trainiert. Hierbei werden die Daten in Trainings- und Testdatensätze aufgeteilt, um die Fähigkeit des Modells zur Generalisierung auf neue, unbekannte Daten zu überprüfen. Während des Trainingsprozesses werden verschiedene Hyperparameter des Modells optimiert, um die Leistung zu maximieren. Dies kann durch Techniken wie Grid Search oder Random Search erfolgen. Auch Kreuzvalidierung wird oft verwendet, um sicherzustellen, dass das Modell robust und verlässlich ist.
+  Im nächsten Schritt wird das Modell mit den vorbereiteten Daten trainiert. Hierbei werden die Daten in Trainings- und Testdatensätze 
+  aufgeteilt, um die Fähigkeit des Modells zur Generalisierung auf neue, unbekannte Daten zu überprüfen. Während des Trainingsprozesses 
+  werden verschiedene Hyperparameter des Modells optimiert, um die Leistung zu maximieren. Dies kann durch Techniken wie Grid Search oder 
+  Random Search erfolgen. Auch Kreuzvalidierung wird oft verwendet, um sicherzustellen, dass das Modell robust und verlässlich ist.
   
-  Ein wichtiger Aspekt der Modellbewertung ist die Messung der Leistung anhand spezifischer Metriken wie Genauigkeit, Präzision, Recall und F1-Score. Diese Metriken geben Aufschluss darüber, wie gut das Modell die verschiedenen Fahrstile unterscheidet und klassifiziert. Für eine detailliertere Analyse kann auch die Betrachtung von Confusion-Matrizen und ROC-Kurven (Receiver Operating Characteristic) nützlich sein, um die Stärken und Schwächen des Modells zu verstehen.
+  Ein wichtiger Aspekt der Modellbewertung ist die Messung der Leistung anhand spezifischer Metriken wie Genauigkeit, Präzision, 
+  Recall und F1-Score. Diese Metriken geben Aufschluss darüber, wie gut das Modell die verschiedenen Fahrstile unterscheidet und 
+  klassifiziert. Für eine detailliertere Analyse kann auch die Betrachtung von Confusion-Matrizen und ROC-Kurven (Receiver Operating 
+  Characteristic) nützlich sein, um die Stärken und Schwächen des Modells zu verstehen.
   
-  Die Analyse der Fahrstile selbst erfolgt oft durch Clustering-Methoden im unüberwachten Lernbereich, falls keine gelabelten Daten verfügbar sind. Algorithmen wie K-Means oder DBSCAN können verwendet werden, um natürliche Gruppen oder Cluster von Fahrstilen in den Daten zu identifizieren. Diese Cluster können dann interpretiert und analysiert werden, um unterschiedliche Fahrstile zu charakterisieren, wie etwa „aggressiv“, „defensiv“ oder „ausgeglichen“. Hierbei kann auch die Visualisierung der Cluster mittels Dimensionenreduktionstechniken wie PCA (Principal Component Analysis) oder t-SNE hilfreich sein, um komplexe Zusammenhänge in den Daten besser zu verstehen.
+  Die Analyse der Fahrstile selbst erfolgt oft durch Clustering-Methoden im unüberwachten Lernbereich, falls keine gelabelten Daten 
+  verfügbar sind. Algorithmen wie K-Means oder DBSCAN können verwendet werden, um natürliche Gruppen oder Cluster von Fahrstilen in 
+  den Daten zu identifizieren. Diese Cluster können dann interpretiert und analysiert werden, um unterschiedliche Fahrstile zu 
+  charakterisieren, wie etwa „aggressiv“, „defensiv“ oder „ausgeglichen“. Hierbei kann auch die Visualisierung der Cluster mittels 
+  Dimensionenreduktionstechniken wie PCA (Principal Component Analysis) oder t-SNE hilfreich sein, um komplexe Zusammenhänge in den 
+  Daten besser zu verstehen.
   
-  Zusätzlich zur reinen Klassifikation und Clusterbildung kann auch die Zeitreihe-Analyse von Fahrdaten von Bedeutung sein. Hierbei werden zeitliche Muster und Trends im Fahrverhalten analysiert, um ein tieferes Verständnis für die Dynamik des Fahrstils zu gewinnen. Recurrent Neural Networks (RNN) oder Long Short-Term Memory (LSTM) Netzwerke sind spezialisierte Modellklassen, die sich besonders gut für die Analyse von Zeitreihendaten eignen.
+  Zusätzlich zur reinen Klassifikation und Clusterbildung kann auch die Zeitreihe-Analyse von Fahrdaten von Bedeutung sein. Hierbei werden 
+  zeitliche Muster und Trends im Fahrverhalten analysiert, um ein tieferes Verständnis für die Dynamik des Fahrstils zu gewinnen. Recurrent 
+  Neural Networks (RNN) oder Long Short-Term Memory (LSTM) Netzwerke sind spezialisierte Modellklassen, die sich besonders gut für die 
+  Analyse von Zeitreihendaten eignen.
   
-  Abschließend ist die Integration und Implementierung der entwickelten Modelle in realen Anwendungen oder Systeme der nächste Schritt. Dies könnte die Entwicklung eines Fahrerassistenzsystems beinhalten, das in Echtzeit Rückmeldungen zum Fahrstil gibt, oder die Implementierung in einer Fahrzeugflottenmanagement-Software zur Analyse und Verbesserung der Fahrgewohnheiten von Fahrzeugflotten.
+  Abschließend ist die Integration und Implementierung der entwickelten Modelle in realen Anwendungen oder Systeme der nächste Schritt. 
+  Dies könnte die Entwicklung eines Fahrerassistenzsystems beinhalten, das in Echtzeit Rückmeldungen zum Fahrstil gibt, oder die 
+  Implementierung in einer Fahrzeugflottenmanagement-Software zur Analyse und Verbesserung der Fahrgewohnheiten von Fahrzeugflotten.
   
-  Die Entwicklung von Machine-Learning-Algorithmen zur Fahrdatenanalyse zur Charakterisierung eines Fahrstils ist somit ein iterativer und mehrstufiger Prozess, der sowohl technisches Know-how als auch kreative Problemlösungsfähigkeiten erfordert. Durch die kontinuierliche Verbesserung der Algorithmen und das Feintuning der Modelle können wertvolle Erkenntnisse gewonnen werden, die nicht nur zur Verbesserung der Sicherheit und Effizienz des Fahrverhaltens beitragen, sondern auch neue Möglichkeiten für personalisierte Fahrerassistenzsysteme eröffnen.
+  Die Entwicklung von Machine-Learning-Algorithmen zur Fahrdatenanalyse zur Charakterisierung eines Fahrstils ist somit ein iterativer und 
+  mehrstufiger Prozess, der sowohl technisches Know-how als auch kreative Problemlösungsfähigkeiten erfordert. Durch die kontinuierliche 
+  Verbesserung der Algorithmen und das Feintuning der Modelle können wertvolle Erkenntnisse gewonnen werden, die nicht nur zur Verbesserung 
+  der Sicherheit und Effizienz des Fahrverhaltens beitragen, sondern auch neue Möglichkeiten für personalisierte Fahrerassistenzsysteme 
+  eröffnen.
   
-  \item \textbf{Funktionale und intuitive Mobile-App}\\ Die Entwicklung einer funktionalen und intuitiven Mobile-App zur Darstellung der Ergebnisse der Fahrdatenanalyse stellt eine anspruchsvolle, aber spannende Herausforderung dar, die die Integration von fortschrittlicher Datenanalyse mit benutzerfreundlichem Design kombiniert. Diese App muss nicht nur die Resultate der Datenanalyse effektiv präsentieren, sondern auch eine robuste Datenakquisitionsfunktionalität bieten, um kontinuierlich präzise und aktuelle Fahrdaten zu erfassen.
+  \item \textbf{Funktionale und intuitive Mobile-App}\\ Die Entwicklung einer funktionalen und intuitiven Mobile-App zur Darstellung der 
   
-  Der erste Schritt in der Entwicklung einer solchen Mobile-App ist die Definition der Benutzeranforderungen und -erfahrungen. Das Design muss sicherstellen, dass die App sowohl für die Datenerfassung während der Fahrt als auch für die Analyse und Visualisierung von Fahrverhalten intuitiv und benutzerfreundlich ist. Dies beginnt mit der Festlegung der Kernfunktionen der App, die typischerweise in zwei Hauptbereiche unterteilt werden: Datenerfassung und Datenanzeige.
+  Ergebnisse der Fahrdatenanalyse stellt eine anspruchsvolle, aber spannende Herausforderung dar, die die Integration von fortschrittlicher 
+  Datenanalyse mit benutzerfreundlichem Design kombiniert. Diese App muss nicht nur die Resultate der Datenanalyse effektiv präsentieren, 
+  sondern auch eine robuste Datenakquisitionsfunktionalität bieten, um kontinuierlich präzise und aktuelle Fahrdaten zu erfassen.
   
-  Für die Datenerfassung umfasst die App Funktionen zur kontinuierlichen Aufzeichnung von Fahrdaten wie Geschwindigkeit, Beschleunigung, Bremsverhalten und GPS-Koordinaten. Dies erfordert die Implementierung von Schnittstellen zur Nutzung der Sensoren des mobilen Geräts, wie dem GPS-Modul und dem Beschleunigungssensor. Die App muss so gestaltet sein, dass sie in der Lage ist, diese Daten in Echtzeit zu erfassen, ohne die Leistung des Geräts erheblich zu beeinträchtigen. Eine effiziente Verwaltung der Datenspeicherung und -übertragung ist dabei unerlässlich, um eine reibungslose und kontinuierliche Datenaufzeichnung zu gewährleisten.
+  Der erste Schritt in der Entwicklung einer solchen Mobile-App ist die Definition der Benutzeranforderungen und -erfahrungen. Das Design 
+  muss sicherstellen, dass die App sowohl für die Datenerfassung während der Fahrt als auch für die Analyse und Visualisierung von
+  Fahrverhalten intuitiv und benutzerfreundlich ist. Dies beginnt mit der Festlegung der Kernfunktionen der App, die typischerweise in 
+  zwei Hauptbereiche unterteilt werden: Datenerfassung und Datenanzeige.
   
-  Die Entwicklung der Benutzeroberfläche (UI) ist ein zentraler Aspekt der App-Entwicklung. Die UI sollte so gestaltet sein, dass sie sowohl ansprechend als auch funktional ist. Dies umfasst die Erstellung von übersichtlichen Dashboards, die eine klare und prägnante Darstellung der gesammelten Daten ermöglichen. Hierzu können Grafiken und Diagramme wie Geschwindigkeits- und Beschleunigungsprofile sowie Heatmaps für Brems- und Lenkverhalten verwendet werden. Interaktive Elemente wie Schieberegler, Dropdown-Menüs und Filteroptionen ermöglichen es den Nutzern, die Daten nach ihren Wünschen anzupassen und zu analysieren.
+  Für die Datenerfassung umfasst die App Funktionen zur kontinuierlichen Aufzeichnung von Fahrdaten wie Geschwindigkeit, Beschleunigung, 
+  Bremsverhalten und GPS-Koordinaten. Dies erfordert die Implementierung von Schnittstellen zur Nutzung der Sensoren des mobilen Geräts, 
+  wie dem GPS-Modul und dem Beschleunigungssensor. Die App muss so gestaltet sein, dass sie in der Lage ist, diese Daten in Echtzeit zu 
+  erfassen, ohne die Leistung des Geräts erheblich zu beeinträchtigen. Eine effiziente Verwaltung der Datenspeicherung und -übertragung ist dabei unerlässlich, um eine reibungslose und kontinuierliche Datenaufzeichnung zu gewährleisten.
   
-  Ein weiterer wichtiger Aspekt der Benutzeroberfläche ist die Visualisierung der Analyseergebnisse. Die App sollte die Auswertung der Fahrstile auf eine verständliche Weise darstellen, etwa durch die Präsentation von Fahrstil-Kategorisierungen oder Performance-Indikatoren in Form von Scoreboards und Rankings. Eine einfache Möglichkeit für den Nutzer, zwischen verschiedenen Fahrstil-Kategorien oder Analysezeiträumen zu wechseln, erhöht die Benutzerfreundlichkeit und ermöglicht eine tiefere Einsicht in das Fahrverhalten.
+  Die Entwicklung der Benutzeroberfläche (UI) ist ein zentraler Aspekt der App-Entwicklung. Die UI sollte so gestaltet sein, dass sie 
+  sowohl ansprechend als auch funktional ist. Dies umfasst die Erstellung von übersichtlichen Dashboards, die eine klare und prägnante 
+  Darstellung der gesammelten Daten ermöglichen. Hierzu können Grafiken und Diagramme wie Geschwindigkeits- und Beschleunigungsprofile 
+  sowie Heatmaps für Brems- und Lenkverhalten verwendet werden. Interaktive Elemente wie Schieberegler, Dropdown-Menüs und Filteroptionen ermöglichen es den Nutzern, die Daten nach ihren Wünschen anzupassen und zu analysieren.
   
-  Zur Sicherstellung der Benutzerfreundlichkeit muss die App auch die Prinzipien der Benutzererfahrung (UX) berücksichtigen. Die Navigation sollte intuitiv und flüssig sein, und die Benutzerinteraktionen sollten minimalen Aufwand erfordern. Durch die Integration von hilfreichen Tutorials und Tooltips kann den Nutzern die Nutzung der App erleichtert werden, insbesondere für diejenigen, die nicht so vertraut mit der Analyse von Fahrdaten sind.
+  Ein weiterer wichtiger Aspekt der Benutzeroberfläche ist die Visualisierung der Analyseergebnisse. Die App sollte die Auswertung der 
+  Fahrstile auf eine verständliche Weise darstellen, etwa durch die Präsentation von Fahrstil-Kategorisierungen oder Performance-Indikatoren 
+  in Form von Scoreboards und Rankings. Eine einfache Möglichkeit für den Nutzer, zwischen verschiedenen Fahrstil-Kategorien oder 
+  Analysezeiträumen zu wechseln, erhöht die Benutzerfreundlichkeit und ermöglicht eine tiefere Einsicht in das Fahrverhalten.
   
-  Neben der UI/UX-Gestaltung ist auch die Backend-Entwicklung ein wesentlicher Bestandteil der App. Die App benötigt ein robustes Backend-System zur Verarbeitung und Speicherung der gesammelten Daten. Hierbei kommen Cloud-Dienste oft zum Einsatz, um die Daten sicher und effizient zu speichern und zu verarbeiten. Die Synchronisation der Daten in Echtzeit zwischen dem mobilen Gerät und dem Backend-Server ist entscheidend, um eine konsistente und aktuelle Datenbasis für die Analyse bereitzustellen.
+  Zur Sicherstellung der Benutzerfreundlichkeit muss die App auch die Prinzipien der Benutzererfahrung (UX) berücksichtigen. 
+  Die Navigation sollte intuitiv und flüssig sein, und die Benutzerinteraktionen sollten minimalen Aufwand erfordern. Durch die Integration
+  von hilfreichen Tutorials und Tooltips kann den Nutzern die Nutzung der App erleichtert werden, insbesondere für diejenigen, die nicht 
+  so vertraut mit der Analyse von Fahrdaten sind.
+  Neben der UI/UX-Gestaltung ist auch die Backend-Entwicklung ein wesentlicher Bestandteil der App. Die App benötigt ein robustes 
+  Backend-System zur Verarbeitung und Speicherung der gesammelten Daten. Hierbei kommen Cloud-Dienste oft zum Einsatz, um die Daten sicher
+  und effizient zu speichern und zu verarbeiten. Die Synchronisation der Daten in Echtzeit zwischen dem mobilen Gerät und dem Backend-Server 
+  ist entscheidend, um eine konsistente und aktuelle Datenbasis für die Analyse bereitzustellen.
   
-  Ein weiteres bedeutendes Element der App-Entwicklung ist die Implementierung von Sicherheitsmaßnahmen. Da die App sensible Fahrdaten speichert und verarbeitet, müssen Datenschutzrichtlinien strikt eingehalten werden. Dazu gehören die Verschlüsselung von Datenübertragungen und -speicherungen sowie die Implementierung von Authentifizierungsmechanismen, um unbefugten Zugriff zu verhindern.
+  Ein weiteres bedeutendes Element der App-Entwicklung ist die Implementierung von Sicherheitsmaßnahmen. Da die App sensible Fahrdaten 
+  speichert und verarbeitet, müssen Datenschutzrichtlinien strikt eingehalten werden. Dazu gehören die Verschlüsselung von 
+  Datenübertragungen und -speicherungen sowie die Implementierung von Authentifizierungsmechanismen, um unbefugten Zugriff zu verhindern.
   
-  Zusätzlich zur Kernfunktionalität der Datenerfassung und -anzeige kann die App durch verschiedene zusätzliche Features erweitert werden. Dazu gehören Benachrichtigungen oder Warnungen, die den Fahrer auf abweichendes Fahrverhalten oder potenzielle Sicherheitsrisiken hinweisen. Ebenso kann die Integration von Gamification-Elementen, wie etwa Fahrstilanalyse-Wettbewerben oder Belohnungssystemen für sicheres Fahren, die Nutzerbindung und -motivation erhöhen.
+  Zusätzlich zur Kernfunktionalität der Datenerfassung und -anzeige kann die App durch verschiedene zusätzliche Features erweitert 
+  werden. Dazu gehören Benachrichtigungen oder Warnungen, die den Fahrer auf abweichendes Fahrverhalten oder potenzielle Sicherheitsrisiken
+   hinweisen. Ebenso kann die Integration von Gamification-Elementen, wie etwa Fahrstilanalyse-Wettbewerben oder Belohnungssystemen für 
+   sicheres Fahren, die Nutzerbindung und -motivation erhöhen.
   
-  Abschließend muss die Mobile-App in verschiedenen Testphasen gründlich evaluiert werden. Dies umfasst sowohl Tests der Benutzerfreundlichkeit als auch technische Tests zur Sicherstellung der Stabilität und Leistung der App unter verschiedenen Bedingungen. Benutzerfeedback spielt eine entscheidende Rolle, um mögliche Verbesserungen zu identifizieren und die App kontinuierlich zu optimieren.
+  Abschließend muss die Mobile-App in verschiedenen Testphasen gründlich evaluiert werden. Dies umfasst sowohl Tests der 
+  Benutzerfreundlichkeit als auch technische Tests zur Sicherstellung der Stabilität und Leistung der App unter verschiedenen Bedingungen. 
+  Benutzerfeedback spielt eine entscheidende Rolle, um mögliche Verbesserungen zu identifizieren und die App kontinuierlich zu optimieren.
   
-  Die Entwicklung einer funktionalen und intuitiven Mobile-App zur Darstellung der Ergebnisse der Fahrdatenanalyse ist ein umfassender Prozess, der technisches Fachwissen und kreatives Design vereint. Durch die Kombination effektiver Datenerfassung, präziser Analyse und benutzerfreundlicher Darstellung können Nutzer wertvolle Einblicke in ihr Fahrverhalten gewinnen und ihre Fahrgewohnheiten gezielt verbessern.
+  Die Entwicklung einer funktionalen und intuitiven Mobile-App zur Darstellung der Ergebnisse der Fahrdatenanalyse ist ein umfassender 
+  Prozess, der technisches Fachwissen und kreatives Design vereint. Durch die Kombination effektiver Datenerfassung, präziser Analyse 
+  und benutzerfreundlicher Darstellung können Nutzer wertvolle Einblicke in ihr Fahrverhalten gewinnen und ihre Fahrgewohnheiten gezielt 
+  verbessern.
 \end{itemize}
 
 \newpage
 \section{Komponenten- und Systemübersicht}
 \label{sec:implement_components}
 
-Das im Rahmen dieser Projektarbeit entwickelte System besteht aus mehreren Subkomponenten, welche über verschiedene Schnittstellen miteinander interagieren. Diese Interaktionen werden in Abbildung {\ref{fig:architecture}} visuell dargestellt und im Laufe dieses Kapitels erläutert. 
+Das im Rahmen dieser Projektarbeit entwickelte System besteht aus mehreren Subkomponenten, welche über verschiedene Schnittstellen 
+miteinander interagieren. Diese Interaktionen werden in Abbildung {\ref{fig:architecture}} visuell dargestellt und im Laufe dieses 
+Kapitels erläutert. 
 \\
-Im Allgemeinen lässt sich das komplette System in zwei unverzichtbare Module unterteilen. Im linken Teil des Diagramms ist die Mobile-App in Verbindung mit dem ELM-327-Adapter zu sehen. Diese beiden Subkomponenten bilden den Client des Systems und kommunizieren via Bluetooth Low Energy (BLE) untereinander.
-Wie bereits in Kapitel {\ref{sec:foundations_obd2}} beschrieben, werden über diese BLE-Schnittstelle CAN-Bus-Fahrdaten erhoben, welche die Mobile-App in eine vorgesehene Datenstruktur einordnet.
+Im Allgemeinen lässt sich das komplette System in zwei unverzichtbare Module unterteilen. Im linken Teil des Diagramms ist die Mobile-
+App in Verbindung mit dem ELM-327-Adapter zu sehen. Diese beiden Subkomponenten bilden den Client des Systems und kommunizieren via 
+Bluetooth Low Energy (BLE) untereinander.
+Wie bereits in Kapitel {\ref{sec:foundations_obd2}} beschrieben, werden über diese BLE-Schnittstelle CAN-Bus-Fahrdaten erhoben, welche 
+die Mobile-App in eine vorgesehene Datenstruktur einordnet.
 (UI in Flutter)
 
 \begin{figure}[h!]
@@ -362,47 +480,108 @@ Wie bereits in Kapitel {\ref{sec:foundations_obd2}} beschrieben, werden über di
   \label{fig:architecture}
 \end{figure}
 
-In der anderen Hälfte von Abbildung {\ref{fig:architecture}} ist ein weiteres Subsystem, in diesem Fall das auf einem Raspberry Pi 4 umgesetzte Backend, abgebildet. Auf dem Raspberry Pi wurde der Container-Service Portainer installiert, welcher für die Verwaltung von Backend-Anwendungen wie beispielsweise dem Rapid-Prototyping-Framework Node-RED (Kapitel \ref{sec:foundations_nodered}) oder der Influx-Datenbank.
-Wie in der Abbildung zu erkennen ist, nimmt Node-RED die leitende Rolle innerhalb des Backends ein, was bedeutet, dass die Mobile-App ausschließlich mit dieser Subkomponente über einen Port auf dem Raspberry Pi interagiert. Um eine zuverlässige Verbindung und einen sicheren Datenaustausch zwischen diesen beiden Ptoragonisten zu gewährleisten,
-wird das Virtual Private Network WireGuard verwendet. Dieser Prozess wird in Kapitel \ref{sec:implement_backend} noch genauer erläutert.
-Aufgrund der verwaltenden Rolle, die das Framework übernimmt, verfügt Node-RED über Zugriff zu anderen Containern des Portainer-Environments, um zum Beispiel über entsprechende APIs mit der Influx-Datenbank oder dem Command Line Input (CLI) des Raspberry Pi zu interagieren.
+In der anderen Hälfte von Abbildung {\ref{fig:architecture}} ist ein weiteres Subsystem, in diesem Fall das auf einem Raspberry Pi 4 
+umgesetzte Backend, abgebildet. Auf dem Raspberry Pi wurde der Container-Service Portainer installiert, welcher für die Verwaltung von 
+Backend-Anwendungen wie beispielsweise dem Rapid-Prototyping-Framework Node-RED (Kapitel \ref{sec:foundations_nodered}) oder der 
+Influx-Datenbank.
+Wie in der Abbildung zu erkennen ist, nimmt Node-RED die leitende Rolle innerhalb des Backends ein, was bedeutet, dass die Mobile-App 
+ausschließlich mit dieser Subkomponente über einen Port auf dem Raspberry Pi interagiert. Um eine zuverlässige Verbindung und einen 
+sicheren Datenaustausch zwischen diesen beiden Ptoragonisten zu gewährleisten,
+wird das WireGuard VPN (Virtual Private Network) verwendet. Dieser Prozess wird in Kapitel \ref{sec:implement_backend} noch genauer erläutert.
+Aufgrund der verwaltenden Rolle, die das Framework übernimmt, verfügt Node-RED über Zugriff zu anderen Containern des Portainer-
+Environments, um zum Beispiel über entsprechende APIs mit der Influx-Datenbank oder dem Command Line Input (CLI) des Raspberry Pi 
+zu interagieren.
 
-\section{Smartphone-App - Subkomponente Data Aquisition}
+\section{Data Aquisition mit einer Smartphone-App}
 \label{sec:implement_dataaquisition}
 
-Um das Fahrverhalten eines Fahrers erfolgreich zu analysieren, müssen im Vorfeld Informationen zur Fahrt gesammelt werden. Um dies zu ermöglichen, wird festgelegt, welche Informations- oder Datentypen zu sammeln sind. Dabei muss nicht nur zwischen Datentypen, sondern auch zwischen dem Ursprung dieser Daten, also den Datenquellen, unterschieden werden. 
-In diesem Projekt übernimmt die Applikation auf dem Smartphone die Aufgabe, OBD-II-Daten von dem entsprechenden Diagnose-Adapter abzurufen und diese um weitere sinnvolle Informationen zu ergänzen. Nach dem Sammeln eines vollständigen Datenbündels wird dieses in eine Datenstruktur sortiert, bevor es an das Backend vermittelt wird.
-Im folgenden werden die im Rahmen dieses Projekts auftretenden Datenquellen aufgelistet und erläutert, welche Informationen erhoben werden.
+Um das Fahrverhalten eines Fahrers erfolgreich zu analysieren, müssen im Vorfeld Informationen zur Fahrt gesammelt werden. Um dies 
+zu ermöglichen, wird festgelegt, welche Informations- oder Datentypen zu sammeln sind. Dabei muss nicht nur zwischen Datentypen, 
+sondern auch zwischen dem Ursprung dieser Daten, also den Datenquellen, unterschieden werden. 
+In diesem Projekt übernimmt die Applikation auf dem Smartphone die Aufgabe, OBD-II-Daten von dem entsprechenden Diagnose-Adapter 
+abzurufen und diese um weitere essentielle Informationen zu ergänzen. Nach dem Sammeln eines vollständigen Fahrdatenbündels wird dieses 
+in eine Datenstruktur sortiert, bevor es an das Backend vermittelt wird.
+Im folgenden werden die im Rahmen dieses Projekts auftretenden Datenquellen aufgelistet und erläutert, welche Informationen auf welche
+Weise erhoben werden.
 
 \subsection*{ELM-327 OBD-II-Adapter}
 
-Der OBD-II-Adapter ELM-327 (Kapitel \ref{subsec:foundations:elm327}) dient der Übermittling spezifischer Informationen während der Fahrt. Einzelne Datenpunkte können über den ELM-327 abgefragt werden, indem an diesen eine aus zwei Hexadezimalzahlen bestehende Nachricht via BLE gesendet wird.
-Diese Nachricht setzt sich zusammen aus dem Mode der Nachricht und der eigentlichen Parameter-ID (PID) des Datenpunktes, dessen Informationen abgefragt werden sollen.
-Im Folgenden werden die zu erhebenden OBD-II-Datenpunkte erläutert:
+Der OBD-II-Adapter ELM-327 (Kapitel \ref{subsec:foundations:elm327}) dient der Übermittling spezifischer Informationen während 
+der Fahrt. Einzelne Datenpunkte können über den ELM-327 direkt bei dem Bordcomputer des Fahrzeugs abgefragt werden, indem an 
+diesen eine aus zwei Hexadezimalzahlen bestehende Nachricht via Bluetooth Low Energy gesendet wird. Es gibt jedoch nicht nur die Möglichkeit,
+Daten abzufragen, sondern auch direkt mit dem OBD-II-Adapter zu kommunizieren. Im unten aufgeführten Ausschnitt sind einige 
+Beispielnachrichten zu sehen.
+
+\begin{lstlisting}[language=Python, caption={Beispiel eines Requests für Echtzeit-Fahrdaten}]
+  > atz
+  < ELM327 v1.5
+
+  > atsp6
+  < OK
+
+  > 01 0D
+  < 41 0D 3A
+\end{lstlisting}
+
+Die beiden oberen Nachrichten werden verwendet, um den OBD-II-Adapter zu konfigurieren. Die Nachricht \textit{atz} wird verwendet,
+um den Adapter zu kontaktieren und dessen Softwareversion abzufragen. Der Befehl \textit{atsp6} dient der Konfiguration des Nachrichtenprotokolls,
+in diesem Fall ist das CAN-Bus Protokoll ausgewählt.
+Die unten angeführte Nachricht zeigt die Abfrage von Echtzeitdaten des Fahrzeugs. Sie setzt sich zusammen aus dem Mode (in diesem Fall \textit{01}) der Nachricht und der 
+eigentlichen Parameter-ID, auch PID genannt (hier \textit{0D}), des Datenpunktes, dessen Informationen abgefragt werden sollen.
+\\
+Im Folgenden werden die zu erhebenden OBD-II-Datenpunkte genauer erläutert:
 \begin{itemize}
-  \item \textbf{Umdrehungen pro Minute des Motors} \\ Der OBD-II-Parameter Engine RPM (Revolutions Per Minute) misst die Drehzahl des Motors, also wie viele Umdrehungen die Kurbelwelle des Motors pro Minute macht. Dieser Wert gibt Auskunft über die aktuelle Motorleistung und den Betriebszustand des Fahrzeugs. Eine höhere Drehzahl bedeutet in der Regel, dass der Motor härter arbeitet, während eine niedrigere Drehzahl auf einen geringeren Arbeitsaufwand hinweist. Die Motor-Drehzahl ist ein wichtiger Indikator für die Effizienz und den Verschleiß des Motors und wird häufig zur Diagnose von Problemen verwendet.
-  \item \textbf{Motorlast} \\ Die Engine Load (Motorauslast) gibt an, wie stark der Motor im Verhältnis zu seiner maximalen Leistungsfähigkeit belastet wird. Dieser Wert wird als Prozentsatz dargestellt, wobei 0.0 bedeutet, dass der Motor gar nicht belastet ist, und 1.0 bedeutet, dass der Motor seine maximale Leistung erbringt.
-  Die Motorlast-Angabe berücksichtigt Faktoren wie die Drosselklappenstellung, die Motordrehzahl, den Luftmassenstrom und den Ansaugkrümmerdruck, um eine Einschätzung darüber zu geben, wie hart der Motor arbeitet. Ein hoher Wert kann auf eine starke Beanspruchung hinweisen, während ein niedriger Wert auf eine geringe Last hindeutet. Dieser Parameter ist wichtig für die Diagnose und Überwachung des Motorbetriebs.
-  \item \textbf{Fahrzeuggeschwindigkeit} \\  Die Fahrzeuggeschwindigkeit wird vom Fahrzeugsteuergerät (ECU) erfasst und über das OBD-II-System bereitgestellt. Die Geschwindigkeit wird in der Regel in Kilometern pro Stunde (km/h) oder Meilen pro Stunde (mph) angezeigt, je nach Region und Fahrzeugkonfiguration. Dieser Parameter ist nützlich für Diagnosen und Überwachungen, da er wichtige Informationen über das Fahrverhalten und die Leistung des Fahrzeugs liefert.
-  \item \textbf{Pedalstellung des Gaspedals} \\ Die Throttle Position oder Gaspedalstellung beschreibt die aktuelle Position des Drosselklappenpedals oder der Drosselklappe in einem Fahrzeug. Diese Position gibt an, wie weit das Gaspedal mit dem Fuß gedrückt ist, und wird von einem Sensor überwacht, der die Information an das Motorsteuergerät (ECU) weiterleitet.
-  Der Parameter wird üblicherweise in Prozent angezeigt, wobei 0.0 ein unberührtes Gaspedal (keine Gasabgabe) bedeutet und 1.0 auf ein voll belastetes Gaspedal hindeutet. Diese Information ist wichtig für die Motorsteuerung, um die Menge des eingespritzten Kraftstoffs und die Luftzufuhr entsprechend anzupassen und so die Leistung und Effizienz des Motors zu optimieren.
-  \item \textbf{Momentaner Kraftstoffverbrauch} \\ Der Parameter Momentaner Kraftstoffverbrauch (häufig als Fuel Consumption oder Instantaneous Fuel Consumption bezeichnet) gibt den aktuellen Verbrauch von Kraftstoff in einem Fahrzeug in Echtzeit an. Dieser Wert wird normalerweise in Litern pro Stunde (l/h) oder in Meilen pro Gallone (mpg) angezeigt.
-  Fachlich bezieht sich dieser Parameter auf die Menge an Kraftstoff, die der Motor in einem bestimmten Zeitraum verbraucht. Die Berechnung erfolgt durch die Fahrzeug-Elektronik, die auf Basis von Sensordaten wie der Einspritzmenge, der Motordrehzahl und der Fahrgeschwindigkeit den Kraftstoffverbrauch berechnet.
-  \item \textbf{Temperatur der Kühlflüssigkeit} \\ Dieser Wert wird von einem Temperatursensor im Kühlsystem des Fahrzeugs erfasst und liefert Informationen über die Temperatur des Kühlmittels, das durch den Motor zirkuliert.
-  Die Kühlmitteltemperatur ist wichtig, da sie auf den Betriebszustand des Motors hinweist. Eine normale Betriebstemperatur liegt in der Regel zwischen 80 und 100 Grad Celsius. Ein zu hoher oder zu niedriger Wert kann auf Probleme im Kühlsystem oder mit dem Motor hindeuten, wie z.B. eine defekte Thermostatklappe oder ein Kühlmittelverlust.
-  Die Überwachung der Kühlmitteltemperatur hilft, die Effizienz des Motors zu gewährleisten und kann dazu beitragen, auch während der Fahrt frühzeitig potenzielle Probleme zu erkennen.
+  \item \textbf{Umdrehungen pro Minute des Motors (PID: 0C)} \\ Der OBD-II-Parameter Engine RPM (Revolutions Per Minute) misst die Drehzahl 
+  des Motors, also wie viele Umdrehungen die Kurbelwelle des Motors pro Minute macht. Dieser Wert gibt Auskunft über die aktuelle 
+  Motorleistung und den Betriebszustand des Fahrzeugs. Eine höhere Drehzahl bedeutet in der Regel, dass der Motor härter arbeitet, 
+  während eine niedrigere Drehzahl auf einen geringeren Arbeitsaufwand hinweist. Die Motor-Drehzahl ist ein wichtiger Indikator 
+  für die Effizienz und die Belastung des Motors.
+  \item \textbf{Motorlast (PID: 04)} \\ Die Motorauslast gibt an, wie stark der Motor im Verhältnis zu seiner maximalen 
+  Leistungsfähigkeit bei der Kraftübertragung durch die Räder auf die Straße belastet wird. Dieser Wert wird als Prozentsatz
+  dargestellt, wobei 0 Prozent bedeuten, dass der Motor gar nicht belastet ist, und 100 Prozent bedeuten, dass der Motor seine 
+  maximale Leistung erbringt.
+  Die Motorlastangabe berücksichtigt Faktoren wie die Drosselklappenstellung, die Motordrehzahl und den Luftmassenstrom
+  um eine Einschätzung darüber zu geben, wie stark der Motor belastet wird. Ein hoher Wert weist auf eine starke 
+  Beanspruchung hin, während ein niedriger Wert auf eine geringe Last hindeutet.
+  \item \textbf{Fahrzeuggeschwindigkeit (PID: 13)} \\  Die Fahrzeuggeschwindigkeit wird vom Fahrzeugsteuergerät (ECU) erfasst und über 
+  das OBD-II-System bereitgestellt. Die Geschwindigkeit wird in der Regel in Kilometern pro Stunde (km/h) oder Meilen pro 
+  Stunde (mph) angezeigt, je nach Region und Fahrzeugkonfiguration. Dieser Parameter ist nützlich für Diagnosen und Überwachungen, 
+  da er wichtige Informationen über das Fahrverhalten und die Bewegungsgeschwindigkeit des Fahrzeugs liefert.
+  \item \textbf{Stellung des Gaspedals (PID: 11)} \\ Die Throttle Position oder Gaspedalstellung beschreibt die aktuelle Position
+  des Drosselklappenpedals oder der Drosselklappe in einem Fahrzeug. Diese Position gibt an, wie weit das Gaspedal mit dem
+  Fuß gedrückt ist, und wird von einem Sensor überwacht, der die Information an das Motorsteuergerät (ECU) weiterleitet.
+  Der Parameter wird üblicherweise in Prozent angezeigt, wobei 0.0 ein unberührtes Gaspedal (keine Gasabgabe) bedeutet 
+  und 1.0 auf ein voll belastetes Gaspedal hindeutet. Diese Information ist wichtig für die Motorsteuerung, um die Menge
+  des eingespritzten Kraftstoffs und die Luftzufuhr entsprechend anzupassen und so die Leistung und Effizienz des Motors 
+  zu optimieren.
 \end{itemize}
 
-\subsection*{Mobiles Endgerät}
-Neben der Kommunikation mit dem OBD-II-Adapter dient die Applikation auf dem Smartphone des Nutzers - wie bereits erwähnt - dem Zweck, die erhobenen Fahrdaten um Mehrwert bringende Datenpunkte zu erweitern.
-Hierbei ist stets zu beurteilen, welche erweiterten Erkenntnisse die Ergänzung bestimmter Informationen liefert und ob die Leistungsfähigkeit der Datenübertragung dadurch beeinflusst wird. Ein Beispiel hierfür wäre das Verwenden einer API, die einen REST-Call (Abrufen von Daten eines Servers über eine HTTP-Anfrage) verwendet, was zu Verzögerungen aufgrund von Verbindungs- und Übertragungszeiten führen kann.
+\subsection*{Smartphone-App}
+Neben der Kommunikation mit dem OBD-II-Adapter dient die Applikation auf dem Smartphone des Nutzers dem Zweck, die erhobenen
+Fahrdaten um Mehrwert bringende Datenpunkte zu erweitern.
+Hierbei ist stets zu beurteilen, welche erweiterten Erkenntnisse die Ergänzung bestimmter Informationen liefert 
+und ob die Leistungsfähigkeit der Datenübertragung dadurch beeinflusst wird. Ein Beispiel hierfür wäre das Verwenden
+einer API, die einen REST-Call (Abrufen von Daten eines Servers über eine HTTP-Anfrage) verwendet, was zu Verzögerungen
+aufgrund von Verbindungs- und Übertragungszeiten führen kann.
 \begin{itemize}
-  \item \textbf{Universally Unique Identifier / UUID} \\ Eine UUID (Universally Unique Identifier) ist ein standardisierter, 128-Bit langer Identifikator, der weltweit eindeutig ist. Sie wird verwendet, um Daten oder Objekte eindeutig zu kennzeichnen, ohne dass eine zentrale Vergabestelle erforderlich ist. UUIDs verhindern Kollisionen durch ihre große Anzahl möglicher Kombinationen und sind daher ideal für die Identifikation von Datensätzen in verteilten Systemen. Ihre Einzigartigkeit garantiert, dass Daten über verschiedene Systeme hinweg konsistent und zuverlässig identifiziert werden können.
-  \item \textbf{Zeitstempel} \\ Der Mehrwert von Zeitstempeln liegt in der verbesserten Nachvollziehbarkeit und Analysefähigkeit der Fahrdaten. Sie ermöglichen es, zeitabhängige Muster zu erkennen und Korrelationen zwischen verschiedenen Ereignissen zu identifizieren, wie beispielsweise Beschleinigungs-, Brems- oder Schaltvorgänge.
-  \item \textbf{GPS-Koordinaten} \\ GPS-Koordinaten, die einem Bündel an Fahrdaten angehängt werden, dienen der präzisen Geolokalisierung und Kontextualisierung der Fahraktivitäten. Diese Koordinaten ermöglichen es, den exakten Standort eines Fahrzeugs zu jedem Zeitpunkt zu ermitteln, wodurch detaillierte Routenanalysen erstellt werden können. Die Integration der GPS-Daten in die Fahrdaten ermöglicht unter anderm eine genaue Analyse des Fahrverhaltens, was zu einem erhöhten Bewusstsein in den bereichen Sicherheit und Effizienz des eigenen Fahrverhaltens beiträgt.
+  \item \textbf{Universally Unique Identifier / UUID} \\ Eine UUID (Universally Unique Identifier) ist ein 
+  standardisierter Identifikator, der innerhalb des Systems eindeutig ist. Sie wird verwendet, um den Ursprung 
+  beziehungsweise den Erzeuger von Daten oder Objekten eindeutig zu kennzeichnen. UUIDs verhindern Kollisionen 
+  durch ihre große Anzahl möglicher Kombinationen und sind daher ideal für die Identifikation von Datensätzen
+  in verteilten Systemen. Die Einzigartigkeit von UUIDs garantiert, dass Daten über verschiedene Systeme oder Softwarekomponenten
+  hinweg konsistent und zuverlässig identifiziert werden können.
+  \item \textbf{Zeitstempel} \\ Der Mehrwert von Zeitstempeln liegt in der verbesserten Nachvollziehbarkeit und
+  Analysefähigkeit der Fahrdaten. Sie ermöglichen es, zeitabhängige Muster zu erkennen und Korrelationen zwischen 
+  verschiedenen Ereignissen zu identifizieren, wie beispielsweise Beschleinigungs-, Brems- oder Schaltvorgänge.
+  \item \textbf{GPS-Koordinaten} \\ GPS-Koordinaten dienen der präzisen Geolokalisierung und Kontextualisierung 
+  der geloggten Fahraktivitäten. Durch sie eröffnet sich die Möglichkeit, den exakten Standort eines Fahrzeugs zu
+  jedem Zeitpunkt der Fahrt zu ermitteln, wodurch detaillierte Routeneigenschaften in die Analyse der Fahrdaten mit einbezogen
+  werden können.
 \end{itemize}
 
-Die eigentliche Datenerhebung oder auch Data Aquisition von Fahrdaten übernimmt die Mobile-App, welche in Flutter implementiert wurde. Um eine Datenerhebung durchzuführen, muss der Benutzer der Applikation zur Funktionalität "Aufzeichnung starten" navigieren, welche direkt beim Start dieser zu sehen ist (Abbildung \ref{fig:app_home}).
+Die eigentliche Datenerhebung oder auch Data Aquisition von Fahrdaten übernimmt die Mobile-App, welche in Flutter
+implementiert wurde. Um eine Datenerhebung durchzuführen, muss der Benutzer der Applikation zur Funktionalität 
+\textit{Aufzeichnung starten} navigieren, welche direkt beim Start dieser zu sehen ist (Abbildung \ref{fig:app_home}).
 
 \begin{figure}[h!]
   \begin{subfigure}{0.45\textwidth}
@@ -452,14 +631,55 @@ Texttextblabla
 
 \subsection*{Datenübertragung}
 
-\section{Raspberry Pi - Backend}
+\section{Rapid-Prototyping-Backend auf einem Raspberry Pi}
 \label{sec:implement_backend}
+
+Für das Speichern der erhobenen Fahrdaten wurde ein Raspberry Pi 4 mit Linux-Betriebssystem aufgesetzt,
+welcher die Rolle des Backends für das Projekt übernimmt. Um diese und weitere Funktionalitäten zu gewährleisten,
+ist die Inbetriebnahme weiterer Services oder Docker-Container erforderlich. Ein Überblick zu dieser Architektur
+ist in Abbildung \ref{fig:overview_backend} zu sehen.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.95\textwidth]{images/comp_dia_raspi.PNG}
+  \caption{Service- und Containerübersicht für den Raspberry Pi}
+  \label{fig:overview_backend}
+\end{figure}
+
+\subsection*{WireGuard VPN}
+Weil grundsätzlich davon auszugehen ist, dass Fahrdaten ausschließlich von außerhalb des Netzwerks, in dem sich 
+das Backend befindet, an dieses gesendet werden, wurde ebenfalls ein WireGuard VPN in Betrieb genommen.
+Die VPN-Software stellt eine abgesicherte Verbindung zu dem Netzwerk her, für das ein 
+Verbindungszertifikat auf dem Smartphone angelegt wurde. Durch den sicheren VPN-Tunnel können das Backend und der Client 
+- in diesem Fall die in Kapitel \ref{sec:implement_dataaquisition} beschriebene Smartphone-App - Nachrichten oder 
+Nutzdaten austauschen.
+
+\subsection*{Portainer als Container Management Software}
+Weil grundsätzlich davon auszugehen ist, dass Fahrdaten ausschließlich von außerhalb des Netzwerks, in dem sich 
+das Backend befindet, an dieses gesendet werden, wurde ebenfalls ein WireGuard VPN in Betrieb genommen.
+Im Rahmen dieser Projektarbeit übernimmt Portainer die Aufgabe, die Services Node-RED und InfluxDB auszuführen
+und zu verwalten.
+
+\subsection*{Node-RED Framework}
+Das Herzstück des Backends in dieser Projektarbeit ist ein mit dem Node-RED Framework implementierter Service,
+über den sämtliche Funktionalitäten von diesem gesteuert werden.
+Node-RED ist ideal für schnelles und unkompliziertes Prototyping, da es eine einfache und flexible Umgebung für
+die Entwicklung von IoT- und Automatisierungslösungen bietet. WebSockets für die Echtzeitkommunikation,
+HTTP-Requests für API-Aufrufe und Datenbank-APIs für die Anbindung und Abfrage von Datenbanken können mit Node-RED 
+mühelos und mit geringem Zeitaufwand integriert und konfiguriert werden.
+
 
 \section{Datengrundlage und Datenvorverarbeitung}
 \label{sec:implement_dataprocessing}
 
-\section{Fahrverhaltensanalyse}
+\section{Fahrdatenanalyse mittels Machine Learning}
 \label{sec:implement_Fahrverhaltensanalyse}
+
+\subsection*{Data Labeling}
+
+\subsection*{Machine Learning Model}
+
+\subsection*{Hyperparameter Tuning}
 
 \section{Smartphone-App - Subkomponente Ergebnisvisualisierung und E-Learning}
 \label{sec:implement_elearning}
