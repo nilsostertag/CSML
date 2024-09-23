@@ -9,6 +9,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  
+  intl: ^0.18.0
+
+  number_system: ^0.0.6+8
+
+  web_socket_channel: ^2.2.0
+
+  geolocator: ^9.0.2
+
+  flutter_blue:
+  get:
+  permission_handler:
 
 dev_dependencies:
   flutter_test:

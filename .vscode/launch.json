@@ -1,0 +1,15 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "prototype_flutter_application",
+            "cwd": "Prototyping\\flutter_application_1\\lib\\main.dart",
+            "program": "E:\\MLD Studium\\Sem02\\Projektarbeit\\Coding\\CarSenseML\\Prototyping\\flutter_application_1\\lib\\main.dart",
+            "request": "launch",
+            "type": "dart"
+        }
+    ]
+}
