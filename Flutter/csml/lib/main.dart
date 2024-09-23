@@ -1,4 +1,5 @@
 import 'package:csml/pages/analytics.dart';
+import 'package:csml/pages/detail_analytics.dart';
 import 'package:csml/pages/my_car.dart';
 import 'package:csml/pages/recent_drives.dart';
 import 'package:csml/pages/recorder.dart';
@@ -26,11 +27,14 @@ class MainApp extends StatelessWidget {
       ),
       home: HomePage(),
       routes: {
-        '/analytics': (context) => Analytics(),
-        '/my_car': (context) => MyCar(),
-        '/recent_drives': (context) => RecentDrives(),
-        '/recorder': (context) => Recorder(),
-        '/settings': (context) => Settings()
+        '/analytics': (context) => const Analytics(),
+        '/my_car': (context) => const MyCar(),
+        '/recent_drives': (context) => const RecentDrives(),
+        '/recorder': (context) => const Recorder(),
+        '/settings': (context) => const Settings(),
+        '/details_safety': (context) => const Detail_Analytics_Safety(),
+        '/details_eco': (context) => const Detail_Analytics_Eco(),
+        '/details_wear': (context) => const Detail_Analytics_Wear()
       },
       debugShowCheckedModeBanner: false,
     );
@@ -43,7 +47,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Center(
-          child: Text('CarSenseML',
+          child: Text('',
           style: TextStyle(color: Colors.white), // Schriftfarbe des Titels)
           ),
         ),
@@ -54,13 +58,29 @@ class HomePage extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                _buildButton('Mein Fahrzeug', mycolorPurple, '/my_car', context),
+                Container(
+                  height: MediaQuery.of(context).size.height / 4,
+                  child: const Center(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 30),
+                      Text('CarSenseML',
+                        style: TextStyle(color: Colors.white, fontSize: 40),
+                      ),
+                      SizedBox(height: 10),
+                      Text('Expand your horizons',
+                        style: TextStyle(color: Colors.white, fontSize: 25),
+                      ),
+                    ],
+                  ),
+                ),
+                ),
                 const SizedBox(height: 10), // Abstand zwischen Buttons
-                _buildButton('Fahrstilanalyse', mycolorPink, '/analytics', context),
+                _buildButton('Fahrdatenanalyse', mycolorPurple, '/analytics', context/*, 'assets\\images\\icon_analytics.png', 0.5*/),
                 const SizedBox(height: 10), // Abstand zwischen Buttons
-                _buildButton('Vergangene Fahrten', mycolorOrange, '/recent_drives', context),
+                _buildButton('Vergangene Fahrten', mycolorPink, '/recent_drives', context/*, 'assets\\images\\icon_drives.png', 0.5*/),
                 const SizedBox(height: 10), // Abstand zwischen Buttons
-                _buildButton('Einstellungen', mycolorYellow, '/settings', context),
+                _buildButton('Einstellungen', mycolorOrange, '/settings', context/*, 'assets\\images\\icon_settings.png', 0.5*/),
               ],
             ),
           ),
@@ -81,7 +101,8 @@ class HomePage extends StatelessWidget {
               child: Text(
                 'Fahrt aufnehmen',
                 style: TextStyle(color: Colors.white,
-                fontSize: 20.0
+                fontSize: 20.0,
+                fontWeight: FontWeight.w300
                 ), // Schriftfarbe des kleinen Buttons
               ),
             ),
@@ -90,7 +111,7 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-
+ 
   Widget _buildButton(String text, Color color, String route, BuildContext context) {
     return Expanded(
       child: SizedBox(
@@ -108,7 +129,8 @@ class HomePage extends StatelessWidget {
           child: Text(
             text,
             style: const TextStyle(color: Colors.white, // Schriftfarbe der großen Buttons
-            fontSize: 20.0,
+            fontSize: 25.0,
+            fontWeight: FontWeight.w300
             ),
           ),
         ),

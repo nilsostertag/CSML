@@ -23,7 +23,12 @@ class _BLEPageState extends State<BLEPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("BLE Scanner"),
+      appBar: AppBar(
+        title: const Center(
+          child: Text('BLE Scanner',
+          style: TextStyle(color: Colors.white)
+          ),
+        )
       ),
       body: GetBuilder<BLEController>(
         init: BLEController(),

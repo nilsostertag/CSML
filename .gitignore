@@ -1,8 +1,12 @@
 # Project ignores------------------------------------------------------------------------------------------
-Prototyping/
 .vscode/
 .venv/
 Flutter/screens_showcase/
+data/
+# Ignore pickles
+*.pkl
+**/*.pkl
+
 # FLUTTER ignores------------------------------------------------------------------------------------------
 
 # Miscellaneous

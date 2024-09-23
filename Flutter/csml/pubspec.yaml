@@ -9,6 +9,20 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  
+  intl: ^0.18.0
+
+  number_system: ^0.0.6+8
+
+  web_socket_channel: ^2.2.0
+
+  geolocator: ^9.0.2
+
+  fl_chart: ^0.40.0
+
+  flutter_blue:
+  get:
+  permission_handler:
 
 dev_dependencies:
   flutter_test:
@@ -17,3 +31,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/

@@ -1,16 +1,10 @@
 # Script for REST-Based communication between Python and NodeRED backend
 import json
-import urllib.request
 import pandas as pd
+import requests
 
-def request(url: str = 'pi4projects.local', port: str = '1880', request: str = None):
-    buffer_url = f'{url}:{port}/{request}'
-    response = request(buffer_url)
-    df = pd.read_json(response)
-    return response, df
-
-def push_data(url: str = 'pi4projects.local', port: str = '1880', request: str = None, payload = None):
-    arg = json.dumps(payload)
-    buffer_url = f'{url}:{port}/{request}&arg={arg}'
-    response = request(buffer_url)
-    pass
+def get_data(uuid: str, drive_id: str) -> pd.DataFrame:
+    ip = 'device_ip'
+    data_string = requests.get(f'http://{ip}:1880/get?uuid={uuid}&drive_id={drive_id}').content.decode('utf-8')
+    data_json = pd.json_normalize(data_string)
+    return data_json

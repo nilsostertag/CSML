@@ -4,19 +4,24 @@ from sklearn.multioutput import MultiOutputRegressor
 import numpy as np
 
 class model:
-    def __init__(self, path: str):
-        with open('multi_target_rf_model.pkl', 'rb') as file:
+    
+    def load_model(path: str):
+        with open(path, 'rb') as file:
             loaded_model = pickle.load(file)
         return loaded_model
-    
-    def analyze(mtrf_model, X):
-        predictions = mtrf_model.predict(X)
 
-        scores_list = {}
+    def analyze(loaded_model, X):
+
+        X = X.loc[:, ['delta_engine_rpm', 'delta_engine_load', 'delta_vehicle_speed', 'diff_allowed_speed', 'throttle_pos', 'delta_throttle_pos', 'vehicle_speed', 'engine_rpm', 'engine_load']]
+
+        predictions = loaded_model.predict(X)
+        scores = {}
 
         target_names = ['score_safety', 'score_eco', 'score_wear']
         for i, target_name in enumerate(target_names):
-            scores_list[target_name] = f'{np.int32(np.mean(predictions[:, i]).round(3) * 1000)}'
-            #print(f'{target_name}: {np.int32(np.mean(predictions[:, i]).round(3) * 1000)}')
+            mean = np.int32(np.mean(predictions[:, i]).round(2) * 100)
+            scores[f'{target_name}'] = f'{mean}'
+
+        return scores
         
     
